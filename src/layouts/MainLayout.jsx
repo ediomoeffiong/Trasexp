@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 
 const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -12,7 +12,7 @@ const MainLayout = () => {
     <div>
       <nav>
         <div className="container nav-container">
-          <div className="nav-logo">Trasexp</div>
+          <Link to="/" className="nav-logo">Trasexp</Link>
 
           <button
             className="mobile-menu-btn"

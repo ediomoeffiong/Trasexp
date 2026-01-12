@@ -10,7 +10,7 @@ const LandingPage = () => {
                     <div className="nav-logo">Trasexp</div>
                     <div className="nav-actions">
                         <Link to="/auth/login" className="btn btn-ghost">Log In</Link>
-                        <Link to="/dashboard" className="btn btn-primary">Get Started</Link>
+                        <Link to="/auth/register" className="btn btn-primary">Get Started</Link>
                     </div>
                 </div>
             </nav>
@@ -27,7 +27,7 @@ const LandingPage = () => {
                             The smartest way to manage your personal finances. Track spending, visualize habits, and reach your financial goals with Trasexp.
                         </p>
                         <div className="hero-actions">
-                            <Link to="/dashboard" className="btn btn-lg btn-primary">Start Tracking Now</Link>
+                            <Link to="/auth/register" className="btn btn-lg btn-primary">Start Tracking Now</Link>
                             <a href="#features" className="btn btn-lg btn-outline">Learn More</a>
                         </div>
                     </div>
@@ -113,7 +113,7 @@ const LandingPage = () => {
                 <div className="container text-center">
                     <h2>Ready to take control?</h2>
                     <p>Join thousands of users improving their financial health today.</p>
-                    <Link to="/dashboard" className="btn btn-lg btn-white">Create Free Account</Link>
+                    <Link to="/auth/register" className="btn btn-lg btn-white">Create Free Account</Link>
                 </div>
             </section>
 

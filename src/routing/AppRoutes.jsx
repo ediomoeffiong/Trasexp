@@ -6,11 +6,16 @@ import AddTransaction from '../pages/AddTransaction';
 import MonthlySummary from '../pages/MonthlySummary';
 
 import LandingPage from '../pages/LandingPage';
+import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Register';
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/register" element={<Register />} />
+
       <Route path="/dashboard" element={<MainLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="add" element={<AddTransaction />} />
