@@ -26,7 +26,7 @@ const MainLayout = () => {
             <ul className="nav-links">
               <li>
                 <NavLink
-                  to="/"
+                  to="/dashboard"
                   className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                   end
                   onClick={closeMenu}
