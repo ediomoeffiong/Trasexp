@@ -1,7 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const LandingPage = () => {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     return (
         <div className="landing-page">
             {/* Navigation */}
@@ -9,8 +18,17 @@ const LandingPage = () => {
                 <div className="container nav-container">
                     <div className="nav-logo">Trasexp</div>
                     <div className="nav-actions">
-                        <Link to="/auth/login" className="btn btn-ghost">Log In</Link>
-                        <Link to="/auth/register" className="btn btn-primary">Get Started</Link>
+                        {user ? (
+                            <>
+                                <Link to="/dashboard" className="btn btn-primary">Dashboard</Link>
+                                <button onClick={handleLogout} className="btn btn-ghost">Logout</button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/auth/login" className="btn btn-ghost">Log In</Link>
+                                <Link to="/auth/register" className="btn btn-primary">Get Started</Link>
+                            </>
+                        )}
                     </div>
                 </div>
             </nav>

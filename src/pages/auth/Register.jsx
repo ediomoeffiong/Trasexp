@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const Register = () => {
         confirmPassword: '',
     });
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleChange = (e) => {
         setFormData({
@@ -19,8 +21,8 @@ const Register = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: Implement actual registration logic
-        console.log('Register attempt:', formData);
+        // In a real app, you'd register here. We'll just log them in directly.
+        login({ email: formData.email, name: formData.name });
         navigate('/dashboard');
     };
 

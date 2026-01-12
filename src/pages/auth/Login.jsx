@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -7,6 +8,7 @@ const Login = () => {
         password: '',
     });
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleChange = (e) => {
         setFormData({
@@ -17,8 +19,7 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: Implement actual login logic
-        console.log('Login attempt:', formData);
+        login(formData); // Simulate login
         navigate('/dashboard');
     };
 

@@ -3,10 +3,14 @@ import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routing/AppRoutes';
 import './App.css';
 
+import { AuthProvider } from './context/AuthContext';
+
 function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
