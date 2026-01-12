@@ -288,3 +288,127 @@ nav {
   border-radius: var(--radius-md);
   margin-bottom: 1rem;
 }
+
+/* Mobile Navigation */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.hamburger {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-main);
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background: var(--text-main);
+  transition: all 0.3s ease-in-out;
+  left: 0;
+}
+
+.hamburger::before {
+  top: -8px;
+}
+
+.hamburger::after {
+  top: 8px;
+}
+
+.hamburger.open {
+  background: transparent;
+}
+
+.hamburger.open::before {
+  transform: rotate(45deg);
+  top: 0;
+}
+
+.hamburger.open::after {
+  transform: rotate(-45deg);
+  top: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .nav-links-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-surface);
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    padding-top: 5rem;
+    z-index: 90;
+  }
+
+  .nav-links-wrapper.open {
+    transform: translateX(0);
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    font-size: 1.25rem;
+  }
+
+  .nav-logo {
+    z-index: 101;
+    /* Keep logo above menu */
+    position: relative;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .dashboard-header {
+    text-align: center;
+  }
+
+  .transaction-item {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .transaction-info {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+
+  .transaction-amount {
+    align-self: flex-end;
+    /* Move amount to right even in column mode, or maybe keep left? Let's try aligning end */
+    font-size: 1.1rem;
+  }
+}
