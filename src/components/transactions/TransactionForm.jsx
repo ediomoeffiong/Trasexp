@@ -72,22 +72,23 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="transaction-form">
+    <form onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="title">Title</label>
+        <label htmlFor="title" className="form-label">Title</label>
         <input
           type="text"
           id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className={errors.title ? 'error' : ''}
+          className={`form-input ${errors.title ? 'error' : ''}`}
+          placeholder="e.g. Grocery Shopping"
         />
-        {errors.title && <span className="error-message">{errors.title}</span>}
+        {errors.title && <span className="text-danger text-sm">{errors.title}</span>}
       </div>
 
       <div className="form-group">
-        <label htmlFor="amount">Amount</label>
+        <label htmlFor="amount" className="form-label">Amount</label>
         <input
           type="number"
           id="amount"
@@ -96,18 +97,20 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
           onChange={handleChange}
           step="0.01"
           min="0"
-          className={errors.amount ? 'error' : ''}
+          className={`form-input ${errors.amount ? 'error' : ''}`}
+          placeholder="0.00"
         />
-        {errors.amount && <span className="error-message">{errors.amount}</span>}
+        {errors.amount && <span className="text-danger text-sm">{errors.amount}</span>}
       </div>
 
       <div className="form-group">
-        <label htmlFor="type">Type</label>
+        <label htmlFor="type" className="form-label">Type</label>
         <select
           id="type"
           name="type"
           value={formData.type}
           onChange={handleChange}
+          className="form-select"
         >
           <option value="income">Income</option>
           <option value="expense">Expense</option>
@@ -115,36 +118,38 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="category">Category</label>
+        <label htmlFor="category" className="form-label">Category</label>
         <select
           id="category"
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className={errors.category ? 'error' : ''}
+          className={`form-select ${errors.category ? 'error' : ''}`}
         >
           <option value="">Select Category</option>
           {categories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
-        {errors.category && <span className="error-message">{errors.category}</span>}
+        {errors.category && <span className="text-danger text-sm">{errors.category}</span>}
       </div>
 
       <div className="form-group">
-        <label htmlFor="date">Date</label>
+        <label htmlFor="date" className="form-label">Date</label>
         <input
           type="date"
           id="date"
           name="date"
           value={formData.date}
           onChange={handleChange}
-          className={errors.date ? 'error' : ''}
+          className={`form-input ${errors.date ? 'error' : ''}`}
         />
-        {errors.date && <span className="error-message">{errors.date}</span>}
+        {errors.date && <span className="text-danger text-sm">{errors.date}</span>}
       </div>
 
-      <button type="submit" disabled={disabled}>Add Transaction</button>
+      <button type="submit" disabled={disabled} className="btn btn-primary btn-block">
+        Add Transaction
+      </button>
     </form>
   );
 };

@@ -73,12 +73,17 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
-      <div className="summary-cards">
+      <div className="dashboard-header" style={{ marginBottom: '2rem' }}>
+        <h1 className="text-xl font-bold">Financial Overview</h1>
+        <p className="text-muted">Welcome back! Here is your latest summary.</p>
+      </div>
+
+      <div className="dashboard-grid">
         <SummaryCard title="Total Income" amount={totalIncome} type="income" />
         <SummaryCard title="Total Expenses" amount={totalExpenses} type="expense" />
         <SummaryCard title="Net Balance" amount={netBalance} type={netBalance >= 0 ? 'positive' : 'negative'} />
       </div>
+
       <TransactionList transactions={recentTransactions} />
     </div>
   );

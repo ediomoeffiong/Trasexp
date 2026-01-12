@@ -28,24 +28,30 @@ const AddTransaction = () => {
   };
 
   return (
-    <div>
-      <h1>Add Transaction</h1>
-      {error && (
-        <div className="error-state">
-          {typeof error === 'string' ? (
-            <p>{error}</p>
-          ) : (
-            Object.entries(error).map(([field, message]) => (
-              <p key={field}><strong>{field}:</strong> {message}</p>
-            ))
-          )}
-        </div>
-      )}
-      {submitting ? (
-        <Loading message="Adding transaction..." />
-      ) : (
-        <TransactionForm onSubmit={handleSubmit} />
-      )}
+    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+      <div className="text-center" style={{ marginBottom: '2rem' }}>
+        <h1 className="text-xl font-bold">Add Transaction</h1>
+        <p className="text-muted">Record a new income or expense.</p>
+      </div>
+
+      <div className="card">
+        {error && (
+          <div className="error-banner">
+            {typeof error === 'string' ? (
+              <p>{error}</p>
+            ) : (
+              Object.entries(error).map(([field, message]) => (
+                <p key={field}><strong>{field}:</strong> {message}</p>
+              ))
+            )}
+          </div>
+        )}
+        {submitting ? (
+          <Loading message="Adding transaction..." />
+        ) : (
+          <TransactionForm onSubmit={handleSubmit} />
+        )}
+      </div>
     </div>
   );
 };

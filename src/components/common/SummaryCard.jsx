@@ -6,10 +6,14 @@ const SummaryCard = ({ title, amount, type }) => {
     currency: 'USD',
   }).format(amount);
 
+  let amountClass = 'summary-amount';
+  if (type === 'income' || type === 'positive') amountClass += ' text-success';
+  if (type === 'expense' || type === 'negative') amountClass += ' text-danger';
+
   return (
-    <div className={`summary-card ${type}`}>
+    <div className="card summary-card">
       <h3>{title}</h3>
-      <p className="amount">{formattedAmount}</p>
+      <p className={amountClass}>{formattedAmount}</p>
     </div>
   );
 };

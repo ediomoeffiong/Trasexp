@@ -6,28 +6,32 @@ const TransactionItem = ({ transaction }) => {
     currency: 'USD',
   }).format(Math.abs(transaction.amount));
 
+  const isIncome = transaction.type === 'income';
+
   return (
-    <li className={`transaction-item ${transaction.type}`}>
+    <div className="transaction-item">
       <div className="transaction-info">
-        <span className="description">{transaction.description}</span>
-        <span className="date">{transaction.date}</span>
+        <span className="font-bold">{transaction.description}</span>
+        <span className="transaction-date">{new Date(transaction.date).toLocaleDateString()}</span>
       </div>
-      <span className={`amount ${transaction.type}`}>
-        {transaction.type === 'income' ? '+' : '-'}{formattedAmount}
+      <span className={`font-bold ${isIncome ? 'text-success' : 'text-danger'}`}>
+        {isIncome ? '+' : '-'}{formattedAmount}
       </span>
-    </li>
+    </div>
   );
 };
 
 const TransactionList = ({ transactions }) => {
   return (
-    <div className="transaction-list">
-      <h3>Recent Transactions</h3>
-      <ul>
+    <div className="card">
+      <div className="transaction-list-header">
+        <h3 className="font-bold text-lg">Recent Activity</h3>
+      </div>
+      <div className="transaction-list">
         {transactions.map((transaction) => (
           <TransactionItem key={transaction.id} transaction={transaction} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

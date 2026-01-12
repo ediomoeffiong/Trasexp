@@ -63,46 +63,67 @@ const MonthlySummary = () => {
   const hasData = totalIncome > 0 || totalExpenses > 0 || Object.keys(categories).length > 0;
 
   return (
-    <div className="monthly-summary">
-      <h1>Monthly Summary</h1>
-      <div className="month-selector">
-        <select value={selectedMonth} onChange={(e) => setSelectedMonth(parseInt(e.target.value))}>
-          {months.map(month => (
-            <option key={month.value} value={month.value}>{month.label}</option>
-          ))}
-        </select>
-        <input
-          type="number"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-          min="2000"
-          max="2030"
-        />
+    <div className="dashboard">
+      <div className="text-center" style={{ marginBottom: '2rem' }}>
+        <h1 className="text-xl font-bold">Monthly Summary</h1>
+        <p className="text-muted">Analyze your income and expenses.</p>
       </div>
+
+      <div className="month-selector card" style={{ flexDirection: 'row', alignItems: 'center', padding: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: '150px' }}>
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+            className="form-select"
+          >
+            {months.map(month => (
+              <option key={month.value} value={month.value}>{month.label}</option>
+            ))}
+          </select>
+        </div>
+        <div style={{ flex: 1, minWidth: '100px' }}>
+          <input
+            type="number"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            min="2000"
+            max="2030"
+            className="form-input"
+          />
+        </div>
+      </div>
+
       {hasData ? (
         <>
-          <div className="summary-cards">
+          <div className="dashboard-grid" style={{ marginTop: '2rem' }}>
             <SummaryCard title="Total Income" amount={totalIncome} type="income" />
             <SummaryCard title="Total Expenses" amount={totalExpenses} type="expense" />
           </div>
-          <div className="category-breakdown">
-            <h3>Category Breakdown</h3>
-            <ul>
+
+          <div className="card category-list">
+            <h3 className="font-bold text-center" style={{ marginBottom: '1rem' }}>Category Breakdown</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {Object.entries(categories).map(([category, amounts]) => (
-                <li key={category} className="category-item">
-                  <span className="category-name">{category}</span>
-                  <span className="income-amount">+${amounts.income?.toFixed(2) || '0.00'}</span>
-                  <span className="expense-amount">-${amounts.expense?.toFixed(2) || '0.00'}</span>
-                </li>
+                <div key={category} className="category-item">
+                  <span className="font-bold">{category}</span>
+                  <div className="text-right">
+                    {amounts.income > 0 && (
+                      <div className="text-success text-sm">+{amounts.income?.toFixed(2)}</div>
+                    )}
+                    {amounts.expense > 0 && (
+                      <div className="text-danger text-sm">-{amounts.expense?.toFixed(2)}</div>
+                    )}
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </>
       ) : (
-        <div className="empty-state">
+        <div className="empty-state" style={{ marginTop: '2rem' }}>
           <p>No transactions found for this month.</p>
           <p>Try selecting a different month or add some transactions!</p>
-          <a href="/add">Add Transaction</a>
+          <a href="/add" className="btn btn-primary" style={{ marginTop: '1rem', textDecoration: 'none' }}>Add Transaction</a>
         </div>
       )}
     </div>
