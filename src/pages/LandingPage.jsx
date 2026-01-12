@@ -20,8 +20,8 @@ const LandingPage = () => {
                     <div className="nav-actions">
                         {user ? (
                             <>
-                                <Link to="/dashboard" className="btn btn-primary">Dashboard</Link>
                                 <button onClick={handleLogout} className="btn btn-ghost">Logout</button>
+                                <Link to="/dashboard" className="btn btn-primary">Dashboard</Link>
                             </>
                         ) : (
                             <>

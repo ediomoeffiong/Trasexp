@@ -54,12 +54,14 @@
 
 /* Navigation */
 nav {
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
-  padding: 1rem 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1.5rem 0;
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
 .nav-container {
@@ -73,12 +75,13 @@ nav {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary-color);
+  text-decoration: none;
 }
 
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   margin: 0;
   padding: 0;
 }
@@ -86,24 +89,38 @@ nav {
 .nav-link {
   font-weight: 500;
   color: var(--text-secondary);
-  position: relative;
-  padding: 0.5rem 0;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  border: none;
+  /* Reset for button */
+  background: transparent;
+  /* Reset for button */
+  cursor: pointer;
+  /* Reset for button */
+  font-family: inherit;
+  /* Reset for button */
 }
 
-.nav-link:hover,
+.nav-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nav-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-main);
+}
+
 .nav-link.active {
-  color: var(--primary-color);
-}
-
-.nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
   background: var(--primary-color);
-  border-radius: 2px;
+  color: white;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Buttons */
