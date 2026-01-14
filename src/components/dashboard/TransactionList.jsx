@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ArrowUpRight, ArrowDownLeft, Calendar } from 'lucide-react';
+
 const TransactionItem = ({ transaction }) => {
   const formattedAmount = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -9,12 +11,20 @@ const TransactionItem = ({ transaction }) => {
   const isIncome = transaction.type === 'income';
 
   return (
-    <div className="transaction-item">
-      <div className="transaction-info">
-        <span className="font-bold">{transaction.description}</span>
-        <span className="transaction-date">{new Date(transaction.date).toLocaleDateString()}</span>
+    <div className="transaction-item hover-effect">
+      <div className="flex items-center gap-3">
+        <div className={`icon-circle ${isIncome ? 'bg-success-light text-success' : 'bg-danger-light text-danger'}`}>
+          {isIncome ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
+        </div>
+        <div className="transaction-info">
+          <span className="font-bold text-main">{transaction.description}</span>
+          <div className="flex items-center gap-1 text-xs text-muted">
+            <Calendar size={12} />
+            <span>{new Date(transaction.date).toLocaleDateString()}</span>
+          </div>
+        </div>
       </div>
-      <span className={`font-bold ${isIncome ? 'text-success' : 'text-danger'}`}>
+      <span className={`font-bold text-lg ${isIncome ? 'text-success' : 'text-danger'}`}>
         {isIncome ? '+' : '-'}{formattedAmount}
       </span>
     </div>

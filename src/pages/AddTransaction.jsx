@@ -28,10 +28,9 @@ const AddTransaction = () => {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <div className="text-center" style={{ marginBottom: '2rem' }}>
-        <h1 className="text-xl font-bold">Add Transaction</h1>
-        <p className="text-muted">Record a new income or expense.</p>
+    <div className="container" style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '2rem' }}>
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold">New Transaction</h1>
       </div>
 
       <div className="card">

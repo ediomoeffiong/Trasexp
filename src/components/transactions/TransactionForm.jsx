@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, DollarSign, Tag, AlignLeft, Check, X } from 'lucide-react';
 
 const TransactionForm = ({ onSubmit, disabled = false }) => {
   const [formData, setFormData] = useState({
@@ -6,10 +7,15 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
     amount: '',
     type: 'expense',
     category: '',
-    date: '',
+    date: new Date().toISOString().split('T')[0], // Default to today
   });
 
+  const [displayAmount, setDisplayAmount] = useState('');
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    // Reset form if needed, or when re-mounting
+  }, []);
 
   const categories = [
     'Food',
@@ -18,8 +24,45 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
     'Utilities',
     'Salary',
     'Freelance',
+    'Health',
+    'Shopping',
     'Other',
   ];
+
+  const handleAmountChange = (e) => {
+    // Allow digits and one decimal point
+    const value = e.target.value.replace(/[^0-9.]/g, '');
+
+    // Prevent multiple decimal points
+    if ((value.match(/\./g) || []).length > 1) return;
+
+    // Limit decimal places to 2
+    if (value.includes('.') && value.split('.')[1].length > 2) return;
+
+    setDisplayAmount(value);
+
+    setFormData(prev => ({
+      ...prev,
+      amount: value,
+    }));
+
+    if (errors.amount) {
+      setErrors(prev => ({ ...prev, amount: '' }));
+    }
+  };
+
+  // Format on blur to add commas or .00
+  const handleAmountBlur = () => {
+    if (!formData.amount) return;
+    const number = parseFloat(formData.amount);
+    if (!isNaN(number)) {
+      setDisplayAmount(number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    }
+  };
+
+  const handleTypeChange = (newType) => {
+    setFormData(prev => ({ ...prev, type: newType }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,7 +70,6 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -38,9 +80,9 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.title.trim()) newErrors.title = 'Description is required';
     if (!formData.amount || isNaN(formData.amount) || parseFloat(formData.amount) <= 0) {
-      newErrors.amount = 'Amount must be a positive number';
+      newErrors.amount = 'Please enter a valid positive amount';
     }
     if (!formData.category) newErrors.category = 'Category is required';
     if (!formData.date) newErrors.date = 'Date is required';
@@ -54,102 +96,141 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
       setErrors(validationErrors);
       return;
     }
-    // Convert amount to number
+
     const dataToSubmit = {
       ...formData,
       amount: parseFloat(formData.amount),
     };
     onSubmit(dataToSubmit);
-    // Reset form
-    setFormData({
-      title: '',
-      amount: '',
-      type: 'expense',
-      category: '',
-      date: '',
-    });
-    setErrors({});
   };
 
+  const isIncome = formData.type === 'income';
+  const themeColor = isIncome ? 'success' : 'danger';
+  const themeClass = isIncome ? 'text-success' : 'text-danger';
+  const bgClass = isIncome ? 'bg-success-light' : 'bg-danger-light';
+  const borderClass = isIncome ? 'border-success' : 'border-danger'; // Assuming we have these or will add/use standard border
+
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="title" className="form-label">Title</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          className={`form-input ${errors.title ? 'error' : ''}`}
-          placeholder="e.g. Grocery Shopping"
-        />
-        {errors.title && <span className="text-danger text-sm">{errors.title}</span>}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="amount" className="form-label">Amount</label>
-        <input
-          type="number"
-          id="amount"
-          name="amount"
-          value={formData.amount}
-          onChange={handleChange}
-          step="0.01"
-          min="0"
-          className={`form-input ${errors.amount ? 'error' : ''}`}
-          placeholder="0.00"
-        />
-        {errors.amount && <span className="text-danger text-sm">{errors.amount}</span>}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="type" className="form-label">Type</label>
-        <select
-          id="type"
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          className="form-select"
+    <form onSubmit={handleSubmit} className="transaction-form">
+      {/* Type Toggle */}
+      <div className="flex gap-4 mb-6 justify-center">
+        <button
+          type="button"
+          onClick={() => handleTypeChange('income')}
+          className={`btn flex-1 transition-all duration-200 ${formData.type === 'income'
+              ? 'bg-success text-white shadow-md transform scale-105'
+              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}
+          style={{ backgroundColor: formData.type === 'income' ? 'var(--success-color)' : '#f3f4f6', color: formData.type === 'income' ? 'white' : '#6b7280' }}
         >
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="category" className="form-label">Category</label>
-        <select
-          id="category"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          className={`form-select ${errors.category ? 'error' : ''}`}
+          Income
+        </button>
+        <button
+          type="button"
+          onClick={() => handleTypeChange('expense')}
+          className={`btn flex-1 transition-all duration-200 ${formData.type === 'expense'
+              ? 'bg-danger text-white shadow-md transform scale-105'
+              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}
+          style={{ backgroundColor: formData.type === 'expense' ? 'var(--danger-color)' : '#f3f4f6', color: formData.type === 'expense' ? 'white' : '#6b7280' }}
         >
-          <option value="">Select Category</option>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        {errors.category && <span className="text-danger text-sm">{errors.category}</span>}
+          Expense
+        </button>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="date" className="form-label">Date</label>
-        <input
-          type="date"
-          id="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          className={`form-input ${errors.date ? 'error' : ''}`}
-        />
-        {errors.date && <span className="text-danger text-sm">{errors.date}</span>}
+      {/* Amount Input */}
+      <div className="form-group mb-8">
+        <label className={`block text-center text-sm font-bold mb-2 uppercase tracking-wide ${themeClass}`}>
+          Amount
+        </label>
+        <div className="relative max-w-xs mx-auto">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <DollarSign className={themeClass} size={24} />
+          </div>
+          <input
+            type="text"
+            inputMode="decimal"
+            name="amount"
+            value={displayAmount}
+            onChange={handleAmountChange}
+            onBlur={handleAmountBlur}
+            className={`form-input text-center text-3xl font-bold py-4 pl-8 pr-4 shadow-sm ${errors.amount ? 'border-red-500' : ''}`}
+            placeholder="0.00"
+            style={{ height: 'auto', color: isIncome ? 'var(--success-color)' : 'var(--danger-color)' }}
+          />
+        </div>
+        {errors.amount && <p className="text-danger text-center text-sm mt-1">{errors.amount}</p>}
       </div>
 
-      <button type="submit" disabled={disabled} className="btn btn-primary btn-block">
-        Add Transaction
-      </button>
+      <div className="grid gap-4">
+        {/* Title */}
+        <div className="form-group">
+          <label htmlFor="title" className="form-label flex items-center gap-2 text-muted">
+            <AlignLeft size={16} /> Description
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className={`form-input ${errors.title ? 'border-red-500' : ''}`}
+            placeholder="What was this for?"
+          />
+          {errors.title && <span className="text-danger text-sm">{errors.title}</span>}
+        </div>
+
+        {/* Category */}
+        <div className="form-group">
+          <label htmlFor="category" className="form-label flex items-center gap-2 text-muted">
+            <Tag size={16} /> Category
+          </label>
+          <select
+            id="category"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className={`form-select ${errors.category ? 'border-red-500' : ''}`}
+          >
+            <option value="">Select Category</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+          {errors.category && <span className="text-danger text-sm">{errors.category}</span>}
+        </div>
+
+        {/* Date */}
+        <div className="form-group">
+          <label htmlFor="date" className="form-label flex items-center gap-2 text-muted">
+            <Calendar size={16} /> Date
+          </label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            className={`form-input ${errors.date ? 'border-red-500' : ''}`}
+          />
+          {errors.date && <span className="text-danger text-sm">{errors.date}</span>}
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <button
+          type="submit"
+          disabled={disabled}
+          className={`btn btn-block py-3 text-lg transition-transform active:scale-95 ${isIncome ? 'btn-success' : 'btn-danger'
+            }`}
+          style={{
+            backgroundColor: isIncome ? 'var(--success-color)' : 'var(--danger-color)',
+            color: 'white'
+          }}
+        >
+          {disabled ? 'Saving...' : 'Save Transaction'}
+        </button>
+      </div>
     </form>
   );
 };
