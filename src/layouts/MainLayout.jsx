@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ConfirmModal from '../components/common/ConfirmModal';
 
 // Icons
 const LayoutIcon = () => (
@@ -21,6 +22,7 @@ const LogoutIcon = () => (
 
 const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -28,8 +30,14 @@ const MainLayout = () => {
 
   const closeMenu = () => setIsMenuOpen(false);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true);
+    closeMenu();
+  };
+
+  const confirmLogout = () => {
     logout();
+    setIsLogoutModalOpen(false);
     navigate('/');
   };
 
@@ -82,7 +90,7 @@ const MainLayout = () => {
               </li>
               <li>
                 <button
-                  onClick={handleLogout}
+                  onClick={handleLogoutClick}
                   className="nav-link logout-btn"
                 >
                   <LogoutIcon />
@@ -96,6 +104,16 @@ const MainLayout = () => {
       <main className="container page-content">
         <Outlet />
       </main>
+
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to log out? You will need to sign in again to access your dashboard."
+        confirmText="Logout"
+        isDanger={true}
+      />
     </div>
   );
 };
