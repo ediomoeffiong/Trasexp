@@ -1,0 +1,311 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Plus, TrendingUp, TrendingDown, Inbox, X } from 'lucide-react';
+import { getAllTransactions, createTransaction } from '../api/transactions';
+import FilterBar from '../components/transactions/FilterBar';
+import TransactionList from '../components/dashboard/TransactionList';
+import TransactionForm from '../components/transactions/TransactionForm';
+import Loading from '../components/common/Loading';
+
+const TransactionListPage = () => {
+    const [transactions, setTransactions] = useState([]);
+    const [filteredTransactions, setFilteredTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [formError, setFormError] = useState(null);
+    const [filters, setFilters] = useState({
+        keyword: '',
+        type: 'all',
+        category: 'all',
+        dateFrom: '',
+        dateTo: ''
+    });
+
+    // Fetch transactions on mount
+    useEffect(() => {
+        fetchTransactions();
+    }, []);
+
+    const fetchTransactions = async () => {
+        try {
+            setLoading(true);
+            const data = await getAllTransactions();
+            setTransactions(data);
+            setFilteredTransactions(data);
+        } catch (err) {
+            console.error('Failed to fetch transactions:', err);
+            setError('Failed to load transactions. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Filter transactions whenever filters change
+    useEffect(() => {
+        const filtered = filterTransactions(transactions, filters);
+        setFilteredTransactions(filtered);
+    }, [transactions, filters]);
+
+    // Filter function
+    const filterTransactions = (transactions, filters) => {
+        return transactions.filter(transaction => {
+            // Keyword search (case-insensitive)
+            if (filters.keyword && !transaction.title?.toLowerCase().includes(filters.keyword.toLowerCase())) {
+                return false;
+            }
+
+            // Type filter
+            if (filters.type && filters.type !== 'all' && transaction.type !== filters.type) {
+                return false;
+            }
+
+            // Category filter
+            if (filters.category && filters.category !== 'all' && transaction.category !== filters.category) {
+                return false;
+            }
+
+            // Date range filter
+            const transactionDate = new Date(transaction.date);
+            if (filters.dateFrom) {
+                const fromDate = new Date(filters.dateFrom);
+                fromDate.setHours(0, 0, 0, 0);
+                if (transactionDate < fromDate) {
+                    return false;
+                }
+            }
+            if (filters.dateTo) {
+                const toDate = new Date(filters.dateTo);
+                toDate.setHours(23, 59, 59, 999);
+                if (transactionDate > toDate) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    };
+
+    // Handle filter changes
+    const handleFilterChange = useCallback((newFilters) => {
+        setFilters(newFilters);
+    }, []);
+
+    // Handle add transaction
+    const handleAddTransaction = async (formData) => {
+        setSubmitting(true);
+        setFormError(null);
+        try {
+            await createTransaction(formData);
+            // Refresh transactions list
+            await fetchTransactions();
+            // Close modal
+            setShowAddModal(false);
+        } catch (err) {
+            if (err.response && err.response.data) {
+                setFormError(err.response.data);
+            } else {
+                setFormError({ general: 'Failed to add transaction. Please try again.' });
+            }
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    // Count active filters
+    const getActiveFiltersCount = () => {
+        let count = 0;
+        if (filters.keyword) count++;
+        if (filters.type !== 'all') count++;
+        if (filters.category !== 'all') count++;
+        if (filters.dateFrom) count++;
+        if (filters.dateTo) count++;
+        return count;
+    };
+
+    // Calculate statistics
+    const totalIncome = filteredTransactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const totalExpenses = Math.abs(
+        filteredTransactions
+            .filter(t => t.type === 'expense')
+            .reduce((sum, t) => sum + t.amount, 0)
+    );
+
+    const netBalance = totalIncome - totalExpenses;
+
+    if (loading) {
+        return <Loading />;
+    }
+
+    if (error) {
+        return (
+            <div className="container page-content">
+                <div className="error-state text-center">
+                    <div className="error-icon bg-danger-light text-danger mb-4 mx-auto w-16 h-16 rounded-full flex items-center justify-center">
+                        <TrendingDown size={32} />
+                    </div>
+                    <h2 className="text-xl font-bold mb-2">Oops! Something went wrong.</h2>
+                    <p className="text-muted mb-4">{error}</p>
+                    <button className="btn btn-primary" onClick={() => window.location.reload()}>
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="container page-content">
+            {/* Header */}
+            <div className="page-header mb-8 flex justify-between items-end">
+                <div>
+                    <h1 className="text-2xl font-bold mb-1">Transactions</h1>
+                    <p className="text-muted">
+                        {filteredTransactions.length} of {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
+                    </p>
+                </div>
+                <button
+                    onClick={() => setShowAddModal(true)}
+                    className="btn btn-primary hidden-mobile"
+                >
+                    <Plus size={18} className="mr-2" />
+                    New Transaction
+                </button>
+            </div>
+
+            {/* Summary Cards */}
+            {filteredTransactions.length > 0 && (
+                <div className="transactions-summary mb-6">
+                    <div className="summary-stat">
+                        <div className="summary-stat-icon bg-success-light text-success">
+                            <TrendingUp size={20} />
+                        </div>
+                        <div>
+                            <p className="text-xs text-muted">Total Income</p>
+                            <p className="font-bold text-lg text-success">
+                                ${totalIncome.toFixed(2)}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="summary-stat">
+                        <div className="summary-stat-icon bg-danger-light text-danger">
+                            <TrendingDown size={20} />
+                        </div>
+                        <div>
+                            <p className="text-xs text-muted">Total Expenses</p>
+                            <p className="font-bold text-lg text-danger">
+                                ${totalExpenses.toFixed(2)}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="summary-stat">
+                        <div className={`summary-stat-icon ${netBalance >= 0 ? 'bg-success-light text-success' : 'bg-danger-light text-danger'}`}>
+                            {netBalance >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+                        </div>
+                        <div>
+                            <p className="text-xs text-muted">Net Balance</p>
+                            <p className={`font-bold text-lg ${netBalance >= 0 ? 'text-success' : 'text-danger'}`}>
+                                ${Math.abs(netBalance).toFixed(2)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Filter Bar */}
+            <FilterBar
+                onFilterChange={handleFilterChange}
+                activeFiltersCount={getActiveFiltersCount()}
+            />
+
+            {/* Transactions List */}
+            {filteredTransactions.length === 0 && transactions.length > 0 ? (
+                <div className="empty-state card text-center py-12 mt-6">
+                    <div className="bg-primary-light text-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Inbox size={40} />
+                    </div>
+                    <h2 className="text-xl font-bold mb-2">No transactions found</h2>
+                    <p className="text-muted mb-6">
+                        Try adjusting your filters to see more results.
+                    </p>
+                </div>
+            ) : filteredTransactions.length === 0 ? (
+                <div className="empty-state card text-center py-12 mt-6">
+                    <div className="bg-primary-light text-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Inbox size={40} />
+                    </div>
+                    <h2 className="text-xl font-bold mb-2">No transactions yet</h2>
+                    <p className="text-muted mb-6">
+                        Add your first income or expense to get started.
+                    </p>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="btn btn-primary"
+                    >
+                        <Plus size={20} className="mr-2" />
+                        Add Transaction
+                    </button>
+                </div>
+            ) : (
+                <div className="mt-6">
+                    <TransactionList
+                        transactions={filteredTransactions}
+                        showAll={true}
+                    />
+                </div>
+            )}
+
+            {/* Add Transaction Modal */}
+            {showAddModal && (
+                <div className="modal-overlay fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="modal-content bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="modal-header flex justify-between items-center p-6 border-b border-gray-100">
+                            <h2 className="text-2xl font-bold">New Transaction</h2>
+                            <button
+                                onClick={() => {
+                                    setShowAddModal(false);
+                                    setFormError(null);
+                                }}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                                aria-label="Close modal"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div className="modal-body p-6">
+                            {formError && (
+                                <div className="error-banner mb-4">
+                                    {typeof formError === 'string' ? (
+                                        <p>{formError}</p>
+                                    ) : (
+                                        Object.entries(formError).map(([field, message]) => (
+                                            <p key={field}><strong>{field}:</strong> {message}</p>
+                                        ))
+                                    )}
+                                </div>
+                            )}
+                            <TransactionForm
+                                onSubmit={handleAddTransaction}
+                                disabled={submitting}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Floating Add Button (Mobile) */}
+            <button
+                onClick={() => setShowAddModal(true)}
+                className="floating-add-btn btn btn-primary"
+                aria-label="Add transaction"
+            >
+                <Plus size={24} />
+            </button>
+        </div>
+    );
+};
+
+export default TransactionListPage;

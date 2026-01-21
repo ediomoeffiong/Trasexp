@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import SummaryCard from '../components/common/SummaryCard';
+import CardSkeleton from '../components/common/CardSkeleton';
 import TransactionList from '../components/dashboard/TransactionList';
 import Loading from '../components/common/Loading';
 import { getAllTransactions } from '../api/transactions';
 
-import { Wallet, TrendingUp, TrendingDown, Plus } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, Plus, List, Calendar, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -43,13 +44,54 @@ const Dashboard = () => {
 
   const netBalance = totalIncome - totalExpenses;
 
+  // Calculate additional metrics
+  const totalTransactions = transactions.length;
+
+  // Get current month's transactions
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  const monthlyTransactions = transactions.filter(t => {
+    const transactionDate = new Date(t.date);
+    return transactionDate.getMonth() === currentMonth &&
+      transactionDate.getFullYear() === currentYear;
+  });
+
+  const monthlyCount = monthlyTransactions.length;
+  const monthlyTotal = monthlyTransactions.reduce((sum, t) => {
+    return t.type === 'income' ? sum + t.amount : sum - Math.abs(t.amount);
+  }, 0);
+
+  // Calculate average transaction amount
+  const averageTransaction = totalTransactions > 0
+    ? (totalIncome + totalExpenses) / totalTransactions
+    : 0;
+
   // Get recent transactions (last 5, sorted by date descending)
   const recentTransactions = transactions
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
 
   if (loading) {
-    return <Loading message="Loading dashboard..." />;
+    return (
+      <div className="dashboard container page-content">
+        <div className="dashboard-header mb-8">
+          <div>
+            <h1 className="text-2xl font-bold mb-1">Financial Overview</h1>
+            <p className="text-muted">Loading your latest summary...</p>
+          </div>
+        </div>
+        <div className="dashboard-grid">
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -120,6 +162,28 @@ const Dashboard = () => {
           amount={netBalance}
           type={netBalance >= 0 ? 'positive' : 'negative'}
           icon={Wallet}
+        />
+        <SummaryCard
+          title="Total Transactions"
+          amount={totalTransactions}
+          type="info"
+          icon={List}
+          isCount={true}
+          subtitle="All time"
+        />
+        <SummaryCard
+          title="This Month"
+          amount={monthlyTotal}
+          type={monthlyTotal >= 0 ? 'positive' : 'negative'}
+          icon={Calendar}
+          subtitle={`${monthlyCount} transaction${monthlyCount !== 1 ? 's' : ''}`}
+        />
+        <SummaryCard
+          title="Average Transaction"
+          amount={averageTransaction}
+          type="info"
+          icon={DollarSign}
+          subtitle="Per transaction"
         />
       </div>
 

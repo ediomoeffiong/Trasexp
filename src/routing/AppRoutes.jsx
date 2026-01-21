@@ -2,8 +2,8 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Dashboard from '../pages/Dashboard';
-import AddTransaction from '../pages/AddTransaction';
 import MonthlySummary from '../pages/MonthlySummary';
+import TransactionListPage from '../pages/TransactionListPage';
 
 import LandingPage from '../pages/LandingPage';
 import Login from '../pages/auth/Login';
@@ -18,12 +18,11 @@ const AppRoutes = () => {
 
       <Route path="/dashboard" element={<MainLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="add" element={<AddTransaction />} />
         <Route path="summary" element={<MonthlySummary />} />
+        <Route path="transactions" element={<TransactionListPage />} />
       </Route>
-      {/* Redirect legacy adds or other routes if necessary, or just keep above structure */}
-      <Route path="/add" element={<MainLayout />}>
-        <Route index element={<AddTransaction />} />
+      <Route path="/transactions" element={<MainLayout />}>
+        <Route index element={<TransactionListPage />} />
       </Route>
       <Route path="/summary" element={<MainLayout />}>
         <Route index element={<MonthlySummary />} />
