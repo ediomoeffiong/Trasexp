@@ -4,6 +4,7 @@ import MainLayout from '../layouts/MainLayout';
 import Dashboard from '../pages/Dashboard';
 import MonthlySummary from '../pages/MonthlySummary';
 import TransactionListPage from '../pages/TransactionListPage';
+import Analytics from '../pages/Analytics';
 
 import LandingPage from '../pages/LandingPage';
 import Login from '../pages/auth/Login';
@@ -26,6 +27,9 @@ const AppRoutes = () => {
       </Route>
       <Route path="/summary" element={<MainLayout />}>
         <Route index element={<MonthlySummary />} />
+      </Route>
+      <Route path="/analytics" element={<MainLayout />}>
+        <Route index element={<Analytics />} />
       </Route>
     </Routes>
   );

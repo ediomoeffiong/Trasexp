@@ -136,27 +136,6 @@ const TransactionListPage = () => {
 
     const netBalance = totalIncome - totalExpenses;
 
-    if (loading) {
-        return <Loading />;
-    }
-
-    if (error) {
-        return (
-            <div className="container page-content">
-                <div className="error-state text-center">
-                    <div className="error-icon bg-danger-light text-danger mb-4 mx-auto w-16 h-16 rounded-full flex items-center justify-center">
-                        <TrendingDown size={32} />
-                    </div>
-                    <h2 className="text-xl font-bold mb-2">Oops! Something went wrong.</h2>
-                    <p className="text-muted mb-4">{error}</p>
-                    <button className="btn btn-primary" onClick={() => window.location.reload()}>
-                        Try Again
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="container page-content">
             {/* Header */}
@@ -164,7 +143,13 @@ const TransactionListPage = () => {
                 <div>
                     <h1 className="text-2xl font-bold mb-1">Transactions</h1>
                     <p className="text-muted">
-                        {filteredTransactions.length} of {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
+                        {error ? (
+                            <span className="text-danger flex items-center gap-1">
+                                <TrendingDown size={14} /> Offline Mode
+                            </span>
+                        ) : (
+                            `${filteredTransactions.length} of ${transactions.length} transaction${transactions.length !== 1 ? 's' : ''}`
+                        )}
                     </p>
                 </div>
                 <button
@@ -176,86 +161,105 @@ const TransactionListPage = () => {
                 </button>
             </div>
 
-            {/* Summary Cards */}
-            {filteredTransactions.length > 0 && (
-                <div className="transactions-summary mb-6">
-                    <div className="summary-stat">
-                        <div className="summary-stat-icon bg-success-light text-success">
-                            <TrendingUp size={20} />
-                        </div>
-                        <div>
-                            <p className="text-xs text-muted">Total Income</p>
-                            <p className="font-bold text-lg text-success">
-                                ${totalIncome.toFixed(2)}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="summary-stat">
-                        <div className="summary-stat-icon bg-danger-light text-danger">
-                            <TrendingDown size={20} />
-                        </div>
-                        <div>
-                            <p className="text-xs text-muted">Total Expenses</p>
-                            <p className="font-bold text-lg text-danger">
-                                ${totalExpenses.toFixed(2)}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="summary-stat">
-                        <div className={`summary-stat-icon ${netBalance >= 0 ? 'bg-success-light text-success' : 'bg-danger-light text-danger'}`}>
-                            {netBalance >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
-                        </div>
-                        <div>
-                            <p className="text-xs text-muted">Net Balance</p>
-                            <p className={`font-bold text-lg ${netBalance >= 0 ? 'text-success' : 'text-danger'}`}>
-                                ${Math.abs(netBalance).toFixed(2)}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Filter Bar */}
+            {/* Filter Bar - Always show */}
             <FilterBar
                 onFilterChange={handleFilterChange}
                 activeFiltersCount={getActiveFiltersCount()}
             />
 
-            {/* Transactions List */}
-            {filteredTransactions.length === 0 && transactions.length > 0 ? (
-                <div className="empty-state card text-center py-12 mt-6">
-                    <div className="bg-primary-light text-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Inbox size={40} />
+            {error ? (
+                <div className="error-card card mt-8 p-12 text-center border-danger">
+                    <div className="error-icon bg-danger-light text-danger mb-4 mx-auto w-16 h-16 rounded-full flex items-center justify-center">
+                        <TrendingDown size={32} />
                     </div>
-                    <h2 className="text-xl font-bold mb-2">No transactions found</h2>
-                    <p className="text-muted mb-6">
-                        Try adjusting your filters to see more results.
-                    </p>
-                </div>
-            ) : filteredTransactions.length === 0 ? (
-                <div className="empty-state card text-center py-12 mt-6">
-                    <div className="bg-primary-light text-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Inbox size={40} />
-                    </div>
-                    <h2 className="text-xl font-bold mb-2">No transactions yet</h2>
-                    <p className="text-muted mb-6">
-                        Add your first income or expense to get started.
-                    </p>
-                    <button
-                        onClick={() => setShowAddModal(true)}
-                        className="btn btn-primary"
-                    >
-                        <Plus size={20} className="mr-2" />
-                        Add Transaction
+                    <h2 className="text-xl font-bold mb-2">Connection Problem</h2>
+                    <p className="text-muted mb-6">{error}</p>
+                    <button className="btn btn-primary" onClick={() => fetchTransactions()}>
+                        Retry Fetching Transactions
                     </button>
                 </div>
-            ) : (
-                <div className="mt-6">
-                    <TransactionList
-                        transactions={filteredTransactions}
-                        showAll={true}
-                    />
+            ) : loading ? (
+                <div className="mt-8">
+                    <Loading />
                 </div>
+            ) : (
+                <>
+                    {/* Summary Cards */}
+                    {filteredTransactions.length > 0 && (
+                        <div className="transactions-summary mb-6 mt-8">
+                            <div className="summary-stat">
+                                <div className="summary-stat-icon bg-success-light text-success">
+                                    <TrendingUp size={20} />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-muted">Total Income</p>
+                                    <p className="font-bold text-lg text-success">
+                                        ${totalIncome.toFixed(2)}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="summary-stat">
+                                <div className="summary-stat-icon bg-danger-light text-danger">
+                                    <TrendingDown size={20} />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-muted">Total Expenses</p>
+                                    <p className="font-bold text-lg text-danger">
+                                        ${totalExpenses.toFixed(2)}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="summary-stat">
+                                <div className={`summary-stat-icon ${netBalance >= 0 ? 'bg-success-light text-success' : 'bg-danger-light text-danger'}`}>
+                                    {netBalance >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+                                </div>
+                                <div>
+                                    <p className="text-xs text-muted">Net Balance</p>
+                                    <p className={`font-bold text-lg ${netBalance >= 0 ? 'text-success' : 'text-danger'}`}>
+                                        ${Math.abs(netBalance).toFixed(2)}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Transactions List */}
+                    {filteredTransactions.length === 0 && transactions.length > 0 ? (
+                        <div className="empty-state card text-center py-12 mt-6">
+                            <div className="bg-primary-light text-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Inbox size={40} />
+                            </div>
+                            <h2 className="text-xl font-bold mb-2">No transactions found</h2>
+                            <p className="text-muted mb-6">
+                                Try adjusting your filters to see more results.
+                            </p>
+                        </div>
+                    ) : filteredTransactions.length === 0 ? (
+                        <div className="empty-state card text-center py-12 mt-6">
+                            <div className="bg-primary-light text-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Inbox size={40} />
+                            </div>
+                            <h2 className="text-xl font-bold mb-2">No transactions yet</h2>
+                            <p className="text-muted mb-6">
+                                Add your first income or expense to get started.
+                            </p>
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="btn btn-primary"
+                            >
+                                <Plus size={20} className="mr-2" />
+                                Add Transaction
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="mt-6">
+                            <TransactionList
+                                transactions={filteredTransactions}
+                                showAll={true}
+                            />
+                        </div>
+                    )}
+                </>
             )}
 
             {/* Add Transaction Modal */}

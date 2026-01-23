@@ -52,25 +52,8 @@ const MonthlySummary = () => {
     { value: 12, label: 'December' },
   ];
 
-  if (loading) {
-    return <Loading message="Analyzing finances..." />;
-  }
-
-  if (error) {
-    return (
-      <div className="container page-content text-center">
-        <div className="bg-danger-light text-danger w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertCircle size={32} />
-        </div>
-        <h2 className="text-xl font-bold mb-2">Could not load summary</h2>
-        <p className="text-muted mb-4">{error}</p>
-        <button className="btn btn-primary" onClick={() => window.location.reload()}>Try Again</button>
-      </div>
-    );
-  }
-
   const { totalIncome = 0, totalExpenses = 0, categories = {} } = summaryData || {};
-  const hasData = totalIncome > 0 || totalExpenses > 0 || Object.keys(categories).length > 0;
+  const hasData = summaryData && (totalIncome > 0 || totalExpenses > 0 || Object.keys(categories).length > 0);
 
   // sort categories by expense amount desc
   const sortedCategories = Object.entries(categories)
@@ -82,10 +65,12 @@ const MonthlySummary = () => {
     <div className="container page-content">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold mb-1">Monthly Summary</h1>
-        <p className="text-muted">Analyze your income and expenses.</p>
+        <p className="text-muted">
+          {error ? <span className="text-danger">Offline Mode (Backend Unreachable)</span> : "Analyze your income and expenses."}
+        </p>
       </div>
 
-      {/* Controls */}
+      {/* Controls - Always show */}
       <div className="card mb-8">
         <div className="flex flex-wrap gap-4 items-center justify-center p-2">
           <div className="relative">
@@ -116,7 +101,20 @@ const MonthlySummary = () => {
         </div>
       </div>
 
-      {hasData ? (
+      {error ? (
+        <div className="error-card card p-12 text-center border-danger">
+          <div className="bg-danger-light text-danger w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle size={32} />
+          </div>
+          <h2 className="text-xl font-bold mb-2">Connection Problem</h2>
+          <p className="text-muted mb-6">{error}</p>
+          <button className="btn btn-primary" onClick={() => window.location.reload()}>
+            Retry Connection
+          </button>
+        </div>
+      ) : loading ? (
+        <Loading message="Analyzing finances..." />
+      ) : hasData ? (
         <>
           <div className="dashboard-grid">
             <SummaryCard
@@ -155,7 +153,6 @@ const MonthlySummary = () => {
                         <span className="font-bold text-danger">
                           -{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(expense)}
                         </span>
-                        {/* <span className="text-xs text-muted block">{percentage.toFixed(1)}%</span> */}
                       </div>
                     </div>
                     {/* Visual Bar */}
