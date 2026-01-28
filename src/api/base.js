@@ -45,6 +45,13 @@ api.interceptors.response.use(
     // Log errors in development
     if (import.meta.env.DEV) {
       console.error('[API Error]', error.response?.data || error.message);
+    } else {
+      // Basic logging for production to diagnose connectivity issues
+      console.error('[API Error Production]', {
+        message: error.message,
+        status: error.response?.status,
+        url: error.config?.url
+      });
     }
 
     // Handle specific error cases

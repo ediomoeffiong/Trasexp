@@ -359,6 +359,22 @@ nav {
   text-decoration: none;
 }
 
+.nav-user-info {
+  margin-left: 2rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-page);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.user-welcome strong {
+  color: var(--primary-color);
+  margin-left: 0.25rem;
+}
+
 .nav-links {
   list-style: none;
   display: flex;

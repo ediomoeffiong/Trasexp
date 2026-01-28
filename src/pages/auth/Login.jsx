@@ -30,16 +30,21 @@ const Login = () => {
 
         try {
             const result = await login(formData);
+            console.log('Login result:', result);
 
             if (result.success) {
                 showToast('Login successful! Welcome back.', 'success');
-                setTimeout(() => navigate('/dashboard'), 500);
+                console.log('Redirecting to dashboard...');
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 500);
             } else {
                 const errorMsg = result.error || 'Login failed. Please try again.';
                 setError(errorMsg);
                 showToast(errorMsg, 'error');
             }
         } catch (err) {
+            console.error('Login error detail:', err);
             const errorMsg = err.message || 'An unexpected error occurred';
             setError(errorMsg);
             showToast(errorMsg, 'error');

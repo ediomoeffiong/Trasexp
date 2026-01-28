@@ -25,7 +25,7 @@ const LogoutIcon = () => (
 
 const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -42,6 +42,10 @@ const MainLayout = () => {
       <nav>
         <div className="container nav-container">
           <Link to="/" className="nav-logo">Trasexp</Link>
+
+          <div className="nav-user-info hidden-mobile">
+            <span className="user-welcome">Welcome, <strong>{user?.username || 'User'}</strong></span>
+          </div>
 
           <button
             className="mobile-menu-btn"

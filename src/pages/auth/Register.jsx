@@ -56,16 +56,21 @@ const Register = () => {
             };
 
             const result = await register(registrationData);
+            console.log('Registration result:', result);
 
             if (result.success) {
                 showToast('Account created successfully! Welcome aboard.', 'success');
-                setTimeout(() => navigate('/dashboard'), 500);
+                console.log('Redirecting to dashboard...');
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 500);
             } else {
                 const errorMsg = result.error || 'Registration failed. Please try again.';
                 setError(errorMsg);
                 showToast(errorMsg, 'error');
             }
         } catch (err) {
+            console.error('Registration error detail:', err);
             const errorMsg = err.message || 'An unexpected error occurred';
             setError(errorMsg);
             showToast(errorMsg, 'error');
