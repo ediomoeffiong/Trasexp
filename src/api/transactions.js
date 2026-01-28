@@ -5,12 +5,13 @@ const getUserId = () => {
   const user = localStorage.getItem('user');
   if (user) {
     try {
-      return JSON.parse(user).id;
+      return JSON.parse(user).userId;
     } catch (e) {
-      return 1;
+      console.error('Error parsing user data:', e);
+      return null;
     }
   }
-  return 1;
+  return null;
 };
 
 // Transactions API

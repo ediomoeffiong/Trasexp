@@ -1,26 +1,51 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 const Login = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     const { login } = useAuth();
+    const { showToast } = useToast();
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
+        // Clear error when user starts typing
+        if (error) setError('');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        login(formData); // Simulate login
-        navigate('/dashboard');
+        setIsLoading(true);
+        setError('');
+
+        try {
+            const result = await login(formData);
+
+            if (result.success) {
+                showToast('Login successful! Welcome back.', 'success');
+                setTimeout(() => navigate('/dashboard'), 500);
+            } else {
+                const errorMsg = result.error || 'Login failed. Please try again.';
+                setError(errorMsg);
+                showToast(errorMsg, 'error');
+            }
+        } catch (err) {
+            const errorMsg = err.message || 'An unexpected error occurred';
+            setError(errorMsg);
+            showToast(errorMsg, 'error');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -31,6 +56,20 @@ const Login = () => {
                     <h2>Welcome Back</h2>
                     <p>Log in to your account to continue</p>
                 </div>
+
+                {error && (
+                    <div className="error-message" style={{
+                        padding: '12px',
+                        marginBottom: '16px',
+                        backgroundColor: '#fee',
+                        border: '1px solid #fcc',
+                        borderRadius: '8px',
+                        color: '#c33',
+                        fontSize: '14px'
+                    }}>
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
@@ -44,6 +83,7 @@ const Login = () => {
                             className="form-input"
                             placeholder="name@example.com"
                             required
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -61,11 +101,16 @@ const Login = () => {
                             className="form-input"
                             placeholder="••••••••"
                             required
+                            disabled={isLoading}
                         />
                     </div>
 
-                    <button type="submit" className="btn btn-primary btn-block">
-                        Log In
+                    <button
+                        type="submit"
+                        className="btn btn-primary btn-block"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Logging in...' : 'Log In'}
                     </button>
                 </form>
 
