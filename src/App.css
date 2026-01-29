@@ -809,6 +809,29 @@ nav {
     transform: translateX(0);
   }
 
+  .mobile-close-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--text-main);
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-close-btn .close-icon {
+    display: inline-block;
+    font-size: 1.5rem;
+    transform: translateY(-1px);
+  }
+
   .nav-links {
     flex-direction: column;
     align-items: flex-start; /* left-align items */

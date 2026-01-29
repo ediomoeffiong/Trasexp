@@ -56,6 +56,12 @@ const MainLayout = () => {
           </button>
 
           <div className={`nav-links-wrapper ${isMenuOpen ? 'open' : ''}`}>
+            {isMenuOpen && (
+              <button className="mobile-close-btn" onClick={closeMenu} aria-label="Close menu">
+                <span className="close-icon">×</span>
+              </button>
+            )}
+
             <ul className="nav-links">
               <li>
                 <NavLink
