@@ -788,18 +788,21 @@ nav {
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--bg-surface);
-    background-color: #ffffff; /* solid white to avoid transparency */
+    background: #ffffff !important; /* force solid white to avoid transparency */
+    min-height: 100vh; /* ensure full viewport coverage */
+    width: 100%;
     box-shadow: 0 8px 30px rgba(2,6,23,0.08);
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     padding-top: 4.5rem;
     padding-left: 1rem;
     padding-right: 1rem;
-    z-index: 200; /* ensure overlay sits above other elements */
+    z-index: 9999; /* ensure overlay sits above other elements */
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .nav-links-wrapper.open {
