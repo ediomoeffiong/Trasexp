@@ -19,6 +19,15 @@ const TrendsBarChart = ({ data }) => {
         );
     }
 
+    const root = typeof window !== 'undefined' ? getComputedStyle(document.documentElement) : null;
+    const getVar = (name, fallback) => (root ? (root.getPropertyValue(name) || fallback).trim() : fallback);
+
+    const gridStroke = getVar('--grid-stroke', 'var(--border-color)');
+    const tickFill = getVar('--text-muted', 'var(--text-muted)');
+    const incomeFill = getVar('--success-color', 'var(--success-color)');
+    const expenseFill = getVar('--danger-color', 'var(--danger-color)');
+    const tooltipCursor = getVar('--tooltip-cursor', 'var(--tooltip-cursor)');
+
     return (
         <div style={{ height: '350px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -26,21 +35,21 @@ const TrendsBarChart = ({ data }) => {
                     data={data}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
                     <XAxis
                         dataKey="month"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tick={{ fill: tickFill, fontSize: 12 }}
                     />
                     <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tick={{ fill: tickFill, fontSize: 12 }}
                         tickFormatter={(value) => `$${value}`}
                     />
                     <Tooltip
-                        cursor={{ fill: 'rgba(0,0,0,0.02)' }}
+                        cursor={{ fill: tooltipCursor }}
                         formatter={(value) => [`$${value.toFixed(2)}`, '']}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     />
@@ -48,7 +57,7 @@ const TrendsBarChart = ({ data }) => {
                     <Bar
                         name="Income"
                         dataKey="income"
-                        fill="#10b981"
+                        fill={incomeFill}
                         radius={[4, 4, 0, 0]}
                         barSize={20}
                         animationDuration={1500}
@@ -56,7 +65,7 @@ const TrendsBarChart = ({ data }) => {
                     <Bar
                         name="Expense"
                         dataKey="expense"
-                        fill="#ef4444"
+                        fill={expenseFill}
                         radius={[4, 4, 0, 0]}
                         barSize={20}
                         animationDuration={1500}

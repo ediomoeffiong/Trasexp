@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/common/ThemeToggle';
+import ThemePreferences from '../components/common/ThemePreferences';
 
 // Icons
 const LayoutIcon = () => (
@@ -45,6 +47,11 @@ const MainLayout = () => {
 
           <div className="nav-user-info hidden-mobile">
             <span className="user-welcome">Welcome, <strong>{user?.username || 'User'}</strong></span>
+          </div>
+
+          <div className="nav-actions hidden-mobile">
+            <ThemeToggle />
+            <ThemePreferences />
           </div>
 
           <button
@@ -105,6 +112,16 @@ const MainLayout = () => {
                   <span>Analytics</span>
                 </NavLink>
               </li>
+              <li className="mobile-only">
+                <div className="nav-link" onClick={closeMenu} role="button" tabIndex={0}>
+                  <ThemeToggle />
+                  <span>Theme</span>
+                </div>
+                <div style={{ paddingLeft: '0.5rem' }}>
+                  <ThemePreferences />
+                </div>
+              </li>
+
               <li>
                 <button
                   onClick={handleLogout}

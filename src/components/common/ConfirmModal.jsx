@@ -21,16 +21,19 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
             style={{ zIndex: 9999, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(8px)' }}
         >
             <div
-                className="bg-white w-full max-w-sm transform scale-100 transition-transform duration-300 relative overflow-hidden"
+                className="w-full max-w-sm transform scale-100 transition-transform duration-300 relative overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
                 style={{
                     borderRadius: '24px',
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                    padding: '0'
+                    padding: '0',
+                    background: 'var(--bg-surface)',
+                    color: 'var(--text-main)',
+                    border: '1px solid var(--border-color)'
                 }}
             >
                 {/* Decorative Top Pattern */}
-                <div style={{ height: '6px', width: '100%', background: 'linear-gradient(90deg, #2563EB 0%, #60A5FA 100%)' }}></div>
+                <div style={{ height: '6px', width: '100%', background: 'linear-gradient(90deg, var(--primary-color) 0%, var(--primary-hover) 100%)' }}></div>
 
                 <button
                     onClick={onClose}
@@ -45,19 +48,14 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
                         style={{
                             width: '80px',
                             height: '80px',
-                            backgroundColor: '#FEF2F2', // Red-50
-                            color: '#EF4444', // Red-500
-                            border: '4px solid #FFFFFF'
-                        }}
-                    >
-                        <LogOut size={36} strokeWidth={2.5} />
-                    </div>
-
-                    <h3 className="text-2xl font-bold mb-3" style={{ color: '#0F172A' }}>
+                            backgroundColor: 'var(--bg-danger-light, rgba(239,68,68,0.12))',
+                            color: 'var(--danger-color)',
+                            border: '4px solid var(--bg-surface)'
+                    <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-main)' }}>
                         {title}
                     </h3>
 
-                    <p className="text-base font-medium leading-relaxed" style={{ color: '#000000' }}>
+                    <p className="text-base font-medium leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                         {message}
                     </p>
                 </div>
@@ -72,9 +70,10 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
 
                     <button
                         onClick={onConfirm}
-                        className="flex-1 py-3.5 text-white font-semibold text-lg transition-transform active:scale-95 shadow-lg shadow-red-500/30 hover:shadow-red-500/40 rounded-xl"
+                        className="flex-1 py-3.5 text-white font-semibold text-lg transition-transform active:scale-95 shadow-lg rounded-xl"
                         style={{
-                            background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)', // Rich Red Gradient
+                            background: 'linear-gradient(135deg, var(--danger-color) 0%, var(--danger-color-dark) 100%)',
+                            boxShadow: '0 6px 20px -6px rgba(225, 29, 72, 0.35)'
                         }}
                     >
                         {confirmText}

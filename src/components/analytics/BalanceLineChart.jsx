@@ -36,23 +36,24 @@ const BalanceLineChart = ({ data }) => {
                     data={chartData}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
+                    {/** use CSS variables for colors */}
                     <defs>
                         <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                            <stop offset="5%" stopColor="var(--primary-color)" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="var(--primary-color)" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--grid-stroke)" />
                     <XAxis
                         dataKey="month"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
                     />
                     <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
                         tickFormatter={(value) => `$${value}`}
                     />
                     <Tooltip
@@ -62,7 +63,7 @@ const BalanceLineChart = ({ data }) => {
                     <Area
                         type="monotone"
                         dataKey="balance"
-                        stroke="#2563eb"
+                        stroke="var(--primary-color)"
                         strokeWidth={3}
                         fillOpacity={1}
                         fill="url(#colorBalance)"
