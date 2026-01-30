@@ -92,15 +92,15 @@ const Register = () => {
                     <div className="error-message" style={{
                         padding: '12px',
                         marginBottom: '16px',
-                        backgroundColor: 'var(--alert-error-bg)',
-                        border: '1px solid var(--alert-error-border)',
+                        backgroundColor: '#fee',
+                        border: '1px solid #fcc',
                         borderRadius: '8px',
-                        color: 'var(--alert-error-text)',
+                        color: '#c33',
                         fontSize: '14px'
                     }}>
                         {error}
                     </div>
-                )} 
+                )}
 
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
@@ -147,7 +147,7 @@ const Register = () => {
                             minLength={6}
                             disabled={isLoading}
                         />
-                        <small style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                        <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
                             Minimum 6 characters
                         </small>
                     </div>

@@ -1,20 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
-const getCssColors = () => {
-  const root = typeof window !== 'undefined' ? getComputedStyle(document.documentElement) : null;
-  const g = (name, fallback) => (root ? (root.getPropertyValue(name) || fallback).trim() : fallback);
-  return [
-    g('--chart-col-1','var(--chart-col-1)'),
-    g('--chart-col-2','var(--chart-col-2)'),
-    g('--chart-col-3','var(--chart-col-3)'),
-    g('--chart-col-4','var(--chart-col-4)'),
-    g('--chart-col-5','var(--chart-col-5)'),
-    g('--chart-col-6','var(--chart-col-6)'),
-    g('--chart-col-7','var(--chart-col-7)'),
-  ];
-};
-
+const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#4b5563'];
 
 const CategoryPieChart = ({ data }) => {
     if (!data || data.length === 0) {
@@ -30,8 +17,6 @@ const CategoryPieChart = ({ data }) => {
         name: item.category.charAt(0) + item.category.slice(1).toLowerCase(),
         value: parseFloat(item.amount)
     }));
-
-    const COLORS = getCssColors();
 
     return (
         <div style={{ height: '350px', width: '100%' }}>

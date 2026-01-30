@@ -121,7 +121,7 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
               ? 'bg-success text-white shadow-md transform scale-105'
               : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
-          style={{ backgroundColor: formData.type === 'income' ? 'var(--success-color)' : 'var(--bg-input)', color: formData.type === 'income' ? 'white' : 'var(--text-muted)' }}
+          style={{ backgroundColor: formData.type === 'income' ? 'var(--success-color)' : '#f3f4f6', color: formData.type === 'income' ? 'white' : '#6b7280' }}
         >
           Income
         </button>
@@ -132,7 +132,7 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
               ? 'bg-danger text-white shadow-md transform scale-105'
               : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
-          style={{ backgroundColor: formData.type === 'expense' ? 'var(--danger-color)' : 'var(--bg-input)', color: formData.type === 'expense' ? 'white' : 'var(--text-muted)' }} 
+          style={{ backgroundColor: formData.type === 'expense' ? 'var(--danger-color)' : '#f3f4f6', color: formData.type === 'expense' ? 'white' : '#6b7280' }}
         >
           Expense
         </button>
@@ -156,7 +156,7 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
             onBlur={handleAmountBlur}
             className={`form-input text-center text-3xl font-bold py-4 pl-8 pr-4 shadow-sm ${errors.amount ? 'border-red-500' : ''}`}
             placeholder="0.00"
-            style={{ height: 'auto', color: isIncome ? 'var(--success-color)' : 'var(--danger-color)' }} 
+            style={{ height: 'auto', color: isIncome ? 'var(--success-color)' : 'var(--danger-color)' }}
           />
         </div>
         {errors.amount && <p className="text-danger text-center text-sm mt-1">{errors.amount}</p>}

@@ -55,20 +55,20 @@ const Toast = ({ message, type, onClose }) => {
 
         const typeStyles = {
             success: {
-                backgroundColor: 'var(--alert-success-bg)',
-                color: 'var(--alert-success-text)',
+                backgroundColor: '#10b981',
+                color: 'white',
             },
             error: {
-                backgroundColor: 'var(--alert-error-bg)',
-                color: 'var(--alert-error-text)',
+                backgroundColor: '#ef4444',
+                color: 'white',
             },
             info: {
-                backgroundColor: 'var(--alert-info-bg)',
-                color: 'var(--alert-info-text)',
+                backgroundColor: '#3b82f6',
+                color: 'white',
             },
             warning: {
-                backgroundColor: 'var(--alert-warning-bg)',
-                color: 'var(--alert-warning-text)',
+                backgroundColor: '#f59e0b',
+                color: 'white',
             },
         };
 
@@ -83,7 +83,7 @@ const Toast = ({ message, type, onClose }) => {
                 style={{
                     background: 'none',
                     border: 'none',
-                    color: 'inherit',
+                    color: 'white',
                     fontSize: '20px',
                     cursor: 'pointer',
                     marginLeft: '16px',
@@ -91,7 +91,7 @@ const Toast = ({ message, type, onClose }) => {
                 }}
             >
                 ×
-            </button> 
+            </button>
         </div>
     );
 };
