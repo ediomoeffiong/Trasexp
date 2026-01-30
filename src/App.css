@@ -868,6 +868,21 @@ nav {
   }
 } 
 
+/* Desktop: keep nav links inline and static */
+.nav-links-wrapper {
+  display: block;
+  position: static;
+  transform: none;
+  width: auto;
+  min-height: auto;
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-shadow: none;
+}
+
+/* Mobile overlay styles */
+@media (max-width: 768px) {
   .nav-links-wrapper {
     position: fixed;
     top: 0;
@@ -917,6 +932,7 @@ nav {
     font-size: 1.5rem;
     transform: translateY(-1px);
   }
+}
 
   .nav-links {
     flex-direction: column;
