@@ -343,6 +343,13 @@ nav {
   top: 0;
   z-index: 50;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+nav.menu-open {
+  background: var(--bg-surface);
+  backdrop-filter: none;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .nav-container {
@@ -792,6 +799,7 @@ nav {
     transition: transform 0.3s ease-in-out;
     padding-top: 5rem;
     z-index: 90;
+    opacity: 1;
   }
 
   .nav-links-wrapper.open {

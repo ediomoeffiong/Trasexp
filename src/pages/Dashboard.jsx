@@ -134,10 +134,12 @@ const Dashboard = () => {
           <SummaryCard
             title="This Month"
             amount={monthlyTotal}
-            type={monthlyTotal >= 0 ? 'positive' : 'negative'}
+            type={monthlyTotal > 0 ? 'positive' : monthlyTotal < 0 ? 'negative' : 'info'}
             icon={Calendar}
             subtitle={`${monthlyCount} transaction${monthlyCount !== 1 ? 's' : ''}`}
           />
+
+
           <SummaryCard
             title="Average Amount"
             amount={averageTransaction}

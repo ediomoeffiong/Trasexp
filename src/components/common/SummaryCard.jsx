@@ -1,21 +1,36 @@
 import React from 'react';
 
 const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount = false }) => {
-  // Format amount based on whether it's a count or currency
+  const isPositive = type === 'income' || type === 'positive';
+  const isNegative = type === 'expense' || type === 'negative';
+
+  // Use absolute value for standard currency formatting, we'll prefix manually
+  const displayAmount = isCount ? amount : Math.abs(amount);
+
   const formattedAmount = isCount
     ? amount.toLocaleString()
     : new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-    }).format(amount);
+    }).format(displayAmount);
+
+  // Determine prefix
+  let prefix = '';
+  if (!isCount && amount !== 0) {
+    if (amount > 0 && isPositive) prefix = '+';
+    if (amount < 0 || (amount > 0 && isNegative)) {
+      prefix = '-';
+    }
+  }
+
 
   let typeClass = '';
   let iconBgClass = '';
 
-  if (type === 'income' || type === 'positive') {
+  if (isPositive) {
     typeClass = 'text-success';
     iconBgClass = 'bg-success-light';
-  } else if (type === 'expense' || type === 'negative') {
+  } else if (isNegative) {
     typeClass = 'text-danger';
     iconBgClass = 'bg-danger-light';
   } else if (type === 'info') {
@@ -30,9 +45,10 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
     <div className="card summary-card card-fade-in">
       <div className="summary-content">
         <div className="summary-text-group">
-          <h3>{title}</h3>
-          <p className={`summary-amount ${typeClass}`}>{formattedAmount}</p>
-          {subtitle && <span className="summary-subtitle">{subtitle}</span>}
+          <h3 className="text-muted text-xs font-medium uppercase tracking-wider mb-1">{title}</h3>
+          <p className={`summary-amount text-2xl font-bold ${typeClass}`}>{prefix}{formattedAmount}</p>
+          {subtitle && <span className="summary-subtitle text-xs text-muted block mt-1">{subtitle}</span>}
+
           {trend && (
             <span className={`summary-trend ${trend > 0 ? 'trend-up' : 'trend-down'}`}>
               {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%

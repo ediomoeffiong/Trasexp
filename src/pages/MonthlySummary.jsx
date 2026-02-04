@@ -59,6 +59,7 @@ const MonthlySummary = () => {
   const sortedCategories = Object.entries(categories)
     .sort(([, a], [, b]) => (b.expense || 0) - (a.expense || 0));
 
+
   const maxExpense = Math.max(...sortedCategories.map(([, data]) => data.expense || 0), 1);
 
   return (

@@ -86,9 +86,8 @@ api.interceptors.response.use(
           console.error(`Error ${status}:`, data);
       }
 
-      // Return a user-friendly error message
-      const errorMessage = data?.message || data?.error || 'An error occurred';
-      return Promise.reject(new Error(errorMessage));
+      // Preserve the original axios error so callers can inspect `error.response` / `error.response.data`
+      return Promise.reject(error);
     } else if (error.request) {
       // Request was made but no response received
       return Promise.reject(new Error('Network error. Please check your connection.'));

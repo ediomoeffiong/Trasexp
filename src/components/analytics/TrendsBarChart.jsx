@@ -20,8 +20,9 @@ const TrendsBarChart = ({ data }) => {
     }
 
     return (
-        <div style={{ height: '350px', width: '100%' }}>
-            <ResponsiveContainer width="100%" height="100%">
+        <div style={{ height: '350px', width: '100%', minWidth: 0 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+
                 <BarChart
                     data={data}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}

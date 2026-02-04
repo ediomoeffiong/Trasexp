@@ -5,6 +5,8 @@ import FilterBar from '../components/transactions/FilterBar';
 import TransactionList from '../components/dashboard/TransactionList';
 import TransactionForm from '../components/transactions/TransactionForm';
 import Loading from '../components/common/Loading';
+import SummaryCard from '../components/common/SummaryCard';
+
 
 const TransactionListPage = () => {
     const [transactions, setTransactions] = useState([]);
@@ -186,42 +188,29 @@ const TransactionListPage = () => {
                 <>
                     {/* Summary Cards */}
                     {filteredTransactions.length > 0 && (
-                        <div className="transactions-summary mb-6 mt-8">
-                            <div className="summary-stat">
-                                <div className="summary-stat-icon bg-success-light text-success">
-                                    <TrendingUp size={20} />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted">Total Income</p>
-                                    <p className="font-bold text-lg text-success">
-                                        ${totalIncome.toFixed(2)}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="summary-stat">
-                                <div className="summary-stat-icon bg-danger-light text-danger">
-                                    <TrendingDown size={20} />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted">Total Expenses</p>
-                                    <p className="font-bold text-lg text-danger">
-                                        ${totalExpenses.toFixed(2)}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="summary-stat">
-                                <div className={`summary-stat-icon ${netBalance >= 0 ? 'bg-success-light text-success' : 'bg-danger-light text-danger'}`}>
-                                    {netBalance >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted">Net Balance</p>
-                                    <p className={`font-bold text-lg ${netBalance >= 0 ? 'text-success' : 'text-danger'}`}>
-                                        ${Math.abs(netBalance).toFixed(2)}
-                                    </p>
-                                </div>
-                            </div>
+                        <div className="dashboard-grid mb-8 mt-8">
+                            <SummaryCard
+                                title="Filtered Income"
+                                amount={totalIncome}
+                                type="income"
+                                icon={TrendingUp}
+                            />
+                            <SummaryCard
+                                title="Filtered Expenses"
+                                amount={totalExpenses}
+                                type="expense"
+                                icon={TrendingDown}
+                            />
+                            <SummaryCard
+                                title="Net (Filtered)"
+                                amount={netBalance}
+                                type={netBalance > 0 ? 'positive' : netBalance < 0 ? 'negative' : 'info'}
+                                icon={TrendingUp}
+                            />
+
                         </div>
                     )}
+
 
                     {/* Transactions List */}
                     {filteredTransactions.length === 0 && transactions.length > 0 ? (

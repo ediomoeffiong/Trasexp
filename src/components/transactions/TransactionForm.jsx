@@ -18,15 +18,15 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
   }, []);
 
   const categories = [
-    'Food',
-    'Transportation',
-    'Entertainment',
-    'Utilities',
-    'Salary',
-    'Freelance',
-    'Health',
-    'Shopping',
-    'Other',
+    { label: 'Food', value: 'FOOD' },
+    { label: 'Transportation', value: 'TRANSPORT' },
+    { label: 'Entertainment', value: 'ENTERTAINMENT' },
+    { label: 'Utilities', value: 'UTILITIES' },
+    { label: 'Salary', value: 'OTHER' },
+    { label: 'Freelance', value: 'OTHER' },
+    { label: 'Health', value: 'HEALTH' },
+    { label: 'Shopping', value: 'OTHER' },
+    { label: 'Other', value: 'OTHER' },
   ];
 
   const handleAmountChange = (e) => {
@@ -100,6 +100,8 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
     const dataToSubmit = {
       ...formData,
       amount: parseFloat(formData.amount),
+      date: `${formData.date}T00:00:00`,
+      type: formData.type ? formData.type.toUpperCase() : formData.type,
     };
     onSubmit(dataToSubmit);
   };
@@ -194,7 +196,7 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
           >
             <option value="">Select Category</option>
             {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+              <option key={`${cat.value}_${cat.label}`} value={cat.value}>{cat.label}</option>
             ))}
           </select>
           {errors.category && <span className="text-danger text-sm">{errors.category}</span>}

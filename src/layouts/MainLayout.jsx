@@ -39,7 +39,7 @@ const MainLayout = () => {
 
   return (
     <div>
-      <nav>
+      <nav className={isMenuOpen ? 'menu-open' : ''}>
         <div className="container nav-container">
           <Link to="/" className="nav-logo">Trasexp</Link>
 
