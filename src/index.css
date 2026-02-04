@@ -2,23 +2,27 @@
 
 :root {
   /* Brand Colors */
-  --primary-color: #2563EB; /* Royal Blue */
+  --primary-color: #2563EB;
+  /* Royal Blue */
   --primary-hover: #1D4ED8;
   --secondary-color: #64748B;
-  
+
   /* Status Colors */
   --success-color: #10B981;
   --danger-color: #EF4444;
   --warning-color: #F59E0B;
 
   /* Backgrounds & Surfaces */
-  --bg-page: #F8FAFC; /* Slate 50 */
+  --bg-page: #F8FAFC;
+  /* Slate 50 */
   --bg-surface: #FFFFFF;
   --bg-input: #F1F5F9;
 
   /* Text Colors */
-  --text-main: #0F172A; /* Slate 900 */
-  --text-secondary: #475569; /* Slate 600 */
+  --text-main: #0F172A;
+  /* Slate 900 */
+  --text-secondary: #475569;
+  /* Slate 600 */
   --text-muted: #94A3B8;
 
   /* Borders & Shadows */
@@ -41,6 +45,11 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: var(--font-body);
@@ -50,7 +59,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   margin-top: 0;
   color: var(--text-main);
@@ -68,7 +82,9 @@ button {
   cursor: pointer;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: var(--font-body);
 }
 
@@ -76,13 +92,16 @@ input, select, textarea {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }

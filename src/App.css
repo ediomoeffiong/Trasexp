@@ -796,14 +796,18 @@ nav.menu-open {
     bottom: 0;
     background: var(--bg-surface);
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, visibility 0.3s;
     padding-top: 5rem;
     z-index: 90;
     opacity: 1;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .nav-links-wrapper.open {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .nav-links {
