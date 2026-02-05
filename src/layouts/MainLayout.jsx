@@ -23,19 +23,16 @@ const LogoutIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
 );
 
+import ProfileDropdown from '../components/common/ProfileDropdown';
+
 const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const closeMenu = () => setIsMenuOpen(false);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   return (
     <div>
@@ -43,8 +40,8 @@ const MainLayout = () => {
         <div className="container nav-container">
           <Link to="/" className="nav-logo">Trasexp</Link>
 
-          <div className="nav-user-info hidden-mobile">
-            <span className="user-welcome">Welcome, <strong>{user?.username || 'User'}</strong></span>
+          <div className="nav-user-info-wrapper">
+            <ProfileDropdown />
           </div>
 
           <button
@@ -99,15 +96,7 @@ const MainLayout = () => {
                   <span>Analytics</span>
                 </NavLink>
               </li>
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="nav-link logout-btn"
-                >
-                  <LogoutIcon />
-                  <span>Logout</span>
-                </button>
-              </li>
+
             </ul>
           </div>
         </div>

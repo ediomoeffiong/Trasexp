@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
@@ -5,6 +6,7 @@ import Dashboard from '../pages/Dashboard';
 import MonthlySummary from '../pages/MonthlySummary';
 import TransactionListPage from '../pages/TransactionListPage';
 import Analytics from '../pages/Analytics';
+import Settings from '../pages/Settings/Settings'; // Added import
 
 import LandingPage from '../pages/LandingPage';
 import Login from '../pages/auth/Login';
@@ -21,6 +23,7 @@ const AppRoutes = () => {
         <Route index element={<Dashboard />} />
         <Route path="summary" element={<MonthlySummary />} />
         <Route path="transactions" element={<TransactionListPage />} />
+        <Route path="settings" element={<Settings />} /> {/* Added route */}
       </Route>
       <Route path="/transactions" element={<MainLayout />}>
         <Route index element={<TransactionListPage />} />
