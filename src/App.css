@@ -804,6 +804,10 @@ nav.menu-open {
     pointer-events: none;
   }
 
+  .nav-user-info-wrapper {
+    display: none;
+  }
+
   .nav-links-wrapper.open {
     transform: translateX(0);
     visibility: visible;
