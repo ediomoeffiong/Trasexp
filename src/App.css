@@ -740,6 +740,10 @@ nav.menu-open {
   z-index: 100;
 }
 
+.mobile-profile-link {
+  display: none !important;
+}
+
 .hamburger {
   display: block;
   width: 24px;
@@ -786,6 +790,10 @@ nav.menu-open {
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: block;
+  }
+
+  .mobile-profile-link {
+    display: flex !important;
   }
 
   .nav-links-wrapper {
