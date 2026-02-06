@@ -127,12 +127,12 @@ const TransactionListPage = () => {
 
     // Calculate statistics
     const totalIncome = filteredTransactions
-        .filter(t => t.type === 'income')
+        .filter(t => t.type === 'INCOME')
         .reduce((sum, t) => sum + t.amount, 0);
 
     const totalExpenses = Math.abs(
         filteredTransactions
-            .filter(t => t.type === 'expense')
+            .filter(t => t.type === 'EXPENSE')
             .reduce((sum, t) => sum + t.amount, 0)
     );
 

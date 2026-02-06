@@ -33,12 +33,12 @@ const Dashboard = () => {
 
   // Calculate totals (safe with empty array)
   const totalIncome = transactions
-    .filter(t => t.type === 'income')
+    .filter(t => t.type === 'INCOME')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalExpenses = Math.abs(
     transactions
-      .filter(t => t.type === 'expense')
+      .filter(t => t.type === 'EXPENSE')
       .reduce((sum, t) => sum + t.amount, 0)
   );
 
@@ -57,7 +57,7 @@ const Dashboard = () => {
 
   const monthlyCount = monthlyTransactions.length;
   const monthlyTotal = monthlyTransactions.reduce((sum, t) => {
-    return t.type === 'income' ? sum + t.amount : sum - Math.abs(t.amount);
+    return t.type === 'INCOME' ? sum + t.amount : sum - Math.abs(t.amount);
   }, 0);
 
   const averageTransaction = totalTransactions > 0

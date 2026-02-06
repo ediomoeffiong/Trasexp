@@ -8,7 +8,7 @@ const TransactionItem = ({ transaction }) => {
     currency: 'USD',
   }).format(Math.abs(transaction.amount));
 
-  const isIncome = transaction.type === 'income';
+  const isIncome = transaction.type === 'INCOME';
 
   // Format category for display
   const formatCategory = (category) => {

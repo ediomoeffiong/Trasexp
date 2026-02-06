@@ -110,8 +110,8 @@ const FilterBar = ({ onFilterChange, activeFiltersCount }) => {
                         className="filter-select"
                     >
                         <option value="all">All Types</option>
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
+                        <option value="INCOME">Income</option>
+                        <option value="EXPENSE">Expense</option>
                     </select>
                 </div>
 
