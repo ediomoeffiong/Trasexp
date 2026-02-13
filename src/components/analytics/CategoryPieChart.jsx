@@ -19,8 +19,8 @@ const CategoryPieChart = ({ data }) => {
     }));
 
     return (
-        <div style={{ height: '350px', width: '100%' }}>
-            <ResponsiveContainer width="100%" height="100%">
+        <div style={{ height: '350px', width: '100%', minWidth: 0 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <PieChart>
                     <Pie
                         data={chartData}

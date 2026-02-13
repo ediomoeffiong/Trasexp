@@ -35,3 +35,19 @@ export const getAnalyticsSummary = async () => {
     });
     return response.data;
 };
+
+// Tax calculation
+export const calculateTaxAuto = async (params) => {
+    const userId = getUserId();
+    if (!userId) {
+        throw new Error('User not authenticated');
+    }
+    try {
+        const response = await api.get('/analytics/tax/auto', {
+            params: { ...params, userId }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};

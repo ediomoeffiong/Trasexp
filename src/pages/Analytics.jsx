@@ -12,6 +12,7 @@ import { getAnalyticsSummary } from '../api/transactions';
 import CategoryPieChart from '../components/analytics/CategoryPieChart';
 import TrendsBarChart from '../components/analytics/TrendsBarChart';
 import BalanceLineChart from '../components/analytics/BalanceLineChart';
+import TaxCalculator from '../components/analytics/TaxCalculator';
 import Loading from '../components/common/Loading';
 
 const Analytics = () => {
@@ -109,6 +110,11 @@ const Analytics = () => {
                             </div>
                             <BalanceLineChart data={data.monthlyTrends} />
                         </div>
+                    </div>
+
+                    {/* Tax Calculator Section */}
+                    <div className="card p-6">
+                        <TaxCalculator />
                     </div>
                 </div>
             )}

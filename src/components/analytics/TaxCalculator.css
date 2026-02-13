@@ -1,0 +1,237 @@
+.tax-calculator {
+    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tax-calculator-header {
+    margin-bottom: 24px;
+}
+
+.tax-calculator-header h2 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    color: #1f2937;
+}
+
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #92400e;
+    margin: 0;
+}
+
+/* Controls */
+.tax-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.control-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.control-input {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    transition: all 0.2s;
+}
+
+.control-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Loading State */
+.tax-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    color: #6b7280;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e5e7eb;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error State */
+.tax-error {
+    padding: 16px;
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    color: #c33;
+}
+
+/* No Data */
+.no-data-message {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+}
+
+.no-data-message p:first-child {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.subdued {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* Results */
+.tax-results {
+    margin-top: 24px;
+}
+
+.tax-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.tax-summary-card {
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tax-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tax-summary-card.highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+.tax-summary-card.highlight .card-label,
+.tax-summary-card.highlight .card-value {
+    color: white;
+}
+
+.card-label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.card-value.income {
+    color: #10b981;
+}
+
+.card-value.expense {
+    color: #ef4444;
+}
+
+.card-value.tax {
+    color: white;
+}
+
+/* Breakdown */
+.tax-breakdown {
+    margin-top: 24px;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.tax-breakdown h3 {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.breakdown-table tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.breakdown-table tr:last-child {
+    border-bottom: none;
+}
+
+.breakdown-label {
+    padding: 12px 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.breakdown-value {
+    padding: 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tax-calculator {
+        padding: 16px;
+    }
+
+    .tax-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .tax-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-value {
+        font-size: 20px;
+    }
+}
