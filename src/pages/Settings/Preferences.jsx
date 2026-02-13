@@ -6,7 +6,10 @@ const Preferences = () => {
     const [formData, setFormData] = useState({
         theme: 'SYSTEM',
         language: 'en',
-        defaultCurrency: 'USD'
+        defaultCurrency: 'USD',
+        defaultCategory: 'General',
+        autoCategorizationToggle: true,
+        taxCalculationToggle: false
     });
 
     useEffect(() => {
@@ -14,7 +17,10 @@ const Preferences = () => {
             setFormData({
                 theme: preferences.theme || 'SYSTEM',
                 language: preferences.language || 'en',
-                defaultCurrency: preferences.defaultCurrency || 'USD'
+                defaultCurrency: preferences.defaultCurrency || 'USD',
+                defaultCategory: preferences.defaultCategory || 'General',
+                autoCategorizationToggle: preferences.autoCategorizationToggle ?? true,
+                taxCalculationToggle: preferences.taxCalculationToggle ?? false
             });
         }
     }, [preferences]);

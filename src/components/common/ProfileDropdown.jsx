@@ -95,12 +95,12 @@ const ProfileDropdown = () => {
 
                     <div className="dropdown-divider"></div>
 
-                    <Link to="/settings" className="dropdown-item" onClick={closeDropdown}>
+                    <Link to="/dashboard/profile" className="dropdown-item" onClick={closeDropdown}>
                         <UserIcon />
                         Profile
                     </Link>
 
-                    <Link to="/settings" className="dropdown-item" onClick={closeDropdown}>
+                    <Link to="/dashboard/settings" className="dropdown-item" onClick={closeDropdown}>
                         <SettingsIcon />
                         Settings
                     </Link>

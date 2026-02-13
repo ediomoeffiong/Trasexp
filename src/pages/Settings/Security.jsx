@@ -4,10 +4,12 @@ import ConfirmModal from '../../components/common/ConfirmModal';
 
 const Security = () => {
     const {
+        profile,
         changePassword,
         sessions,
         loginHistory,
         fetchSecurityData,
+        loadAllSettings,
         terminateSession,
         loading
     } = useSettings();
@@ -21,11 +23,15 @@ const Security = () => {
     const [showPasswordForm, setShowPasswordForm] = useState(false);
 
     useEffect(() => {
+        loadAllSettings();
         fetchSecurityData();
         // Set up polling for security data (every 30s)
-        const interval = setInterval(fetchSecurityData, 30000);
+        const interval = setInterval(() => {
+            loadAllSettings();
+            fetchSecurityData();
+        }, 30000);
         return () => clearInterval(interval);
-    }, [fetchSecurityData]);
+    }, [loadAllSettings, fetchSecurityData]);
 
     const handlePasswordChange = (e) => {
         const { name, value } = e.target;
@@ -140,15 +146,28 @@ const Security = () => {
                 </div>
             </div>
 
-            {/* 2FA Section - Placeholder for now */}
+            {/* 2FA Section */}
             <div className="settings-section">
                 <h3>Two-Factor Authentication</h3>
-                <div className="card flex justify-between items-center">
-                    <div>
-                        <p className="mb-1"><strong>Two-Factor Authentication (2FA)</strong></p>
-                        <p className="text-muted text-sm">Add an extra layer of security to your account</p>
+                <div className="card">
+                    <div className="setting-item">
+                        <div className="setting-info">
+                            <h4>Two-Factor Authentication (2FA)</h4>
+                            <p>Add an extra layer of security to your account using TOTP (Google Authenticator, etc.)</p>
+                        </div>
+                        <label className="toggle-switch">
+                            <input
+                                type="checkbox"
+                                checked={profile?.twoFactorEnabled || false}
+                                onChange={async () => {
+                                    alert('2FA Toggle Triggered (Stub)');
+                                    // In a real app we'd call the 2FA endpoints
+                                }}
+                                disabled={loading}
+                            />
+                            <span className="slider"></span>
+                        </label>
                     </div>
-                    <button className="btn" disabled>Coming Soon</button>
                 </div>
             </div>
 

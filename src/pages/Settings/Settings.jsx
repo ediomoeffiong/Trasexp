@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../hooks/useSettings';
-import AccountProfile from './AccountProfile';
 import Security from './Security';
 import Notifications from './Notifications';
 import Preferences from './Preferences';
+import Financial from './Financial';
 import Compliance from './Compliance';
 import DangerZone from './DangerZone';
 import Loading from '../../components/common/Loading';
@@ -28,10 +28,13 @@ const ShieldIcon = () => (
 const AlertIcon = () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
 );
+const DollarSignIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+);
 
 const Settings = () => {
     const { loadAllSettings, pageLoading, profile } = useSettings();
-    const [activeTab, setActiveTab] = useState('account');
+    const [activeTab, setActiveTab] = useState('security');
 
     useEffect(() => {
         loadAllSettings();
@@ -41,15 +44,23 @@ const Settings = () => {
         return <div className="page-content container"><Loading /></div>;
     }
 
+    const tabs = [
+        { id: 'security', label: 'Security', icon: <SecurityIcon /> },
+        { id: 'notifications', label: 'Notifications', icon: <BellIcon /> },
+        { id: 'preferences', label: 'Preferences', icon: <SlidersIcon /> },
+        { id: 'financial', label: 'Financial', icon: <DollarSignIcon /> }, // New Financial tab
+        { id: 'compliance', label: 'Compliance', icon: <ShieldIcon /> }, // Compliance tab re-added
+    ];
+
     const renderContent = () => {
         switch (activeTab) {
-            case 'account': return <AccountProfile />;
             case 'security': return <Security />;
             case 'notifications': return <Notifications />;
             case 'preferences': return <Preferences />;
+            case 'financial': return <Financial />; // New case for Financial
             case 'compliance': return <Compliance />;
             case 'danger': return <DangerZone />;
-            default: return <AccountProfile />;
+            default: return <Security />; // Default to Security since AccountProfile is removed
         }
     };
 
@@ -62,36 +73,15 @@ const Settings = () => {
 
             <div className="settings-container">
                 <div className="settings-sidebar">
-                    <button
-                        className={`settings-tab ${activeTab === 'account' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('account')}
-                    >
-                        <ProfileIcon /> Account Profile
-                    </button>
-                    <button
-                        className={`settings-tab ${activeTab === 'security' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('security')}
-                    >
-                        <SecurityIcon /> Security
-                    </button>
-                    <button
-                        className={`settings-tab ${activeTab === 'notifications' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('notifications')}
-                    >
-                        <BellIcon /> Notifications
-                    </button>
-                    <button
-                        className={`settings-tab ${activeTab === 'preferences' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('preferences')}
-                    >
-                        <SlidersIcon /> Preferences
-                    </button>
-                    <button
-                        className={`settings-tab ${activeTab === 'compliance' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('compliance')}
-                    >
-                        <ShieldIcon /> Compliance
-                    </button>
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            className={`settings-tab ${activeTab === tab.id ? 'active' : ''} ${tab.className || ''}`}
+                            onClick={() => setActiveTab(tab.id)}
+                        >
+                            {tab.icon} {tab.label}
+                        </button>
+                    ))}
                     <div style={{ height: '1px', background: 'var(--border-color)', margin: '0.5rem 1rem' }}></div>
                     <button
                         className={`settings-tab danger ${activeTab === 'danger' ? 'active' : ''}`}

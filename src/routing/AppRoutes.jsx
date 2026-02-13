@@ -6,7 +6,9 @@ import Dashboard from '../pages/Dashboard';
 import MonthlySummary from '../pages/MonthlySummary';
 import TransactionListPage from '../pages/TransactionListPage';
 import Analytics from '../pages/Analytics';
-import Settings from '../pages/Settings/Settings'; // Added import
+import Profile from '../pages/Profile/Profile';
+import Settings from '../pages/Settings/Settings';
+// Added import
 
 import LandingPage from '../pages/LandingPage';
 import Login from '../pages/auth/Login';
@@ -23,6 +25,7 @@ const AppRoutes = () => {
         <Route index element={<Dashboard />} />
         <Route path="summary" element={<MonthlySummary />} />
         <Route path="transactions" element={<TransactionListPage />} />
+        <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<Settings />} /> {/* Added route */}
       </Route>
       <Route path="/transactions" element={<MainLayout />}>
