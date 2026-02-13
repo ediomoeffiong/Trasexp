@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SummaryCard from '../components/common/SummaryCard';
+import { useSettings } from '../hooks/useSettings';
 import Loading from '../components/common/Loading';
 import { getMonthlySummary } from '../api/transactions';
 import {
@@ -12,6 +13,8 @@ import {
 } from 'lucide-react';
 
 const MonthlySummary = () => {
+  const { preferences } = useSettings();
+  const currency = preferences?.defaultCurrency || 'NGN';
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [summaryData, setSummaryData] = useState(null);
@@ -152,7 +155,7 @@ const MonthlySummary = () => {
                       <span className="font-bold text-main">{category}</span>
                       <div className="text-right">
                         <span className="font-bold text-danger">
-                          -{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(expense)}
+                          -{new Intl.NumberFormat('en-NG', { style: 'currency', currency: currency }).format(expense)}
                         </span>
                       </div>
                     </div>

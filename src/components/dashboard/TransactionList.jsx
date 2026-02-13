@@ -1,11 +1,15 @@
 import React from 'react';
+import { useSettings } from '../../hooks/useSettings';
 
 import { ArrowUpRight, ArrowDownLeft, Calendar, Tag } from 'lucide-react';
 
 const TransactionItem = ({ transaction }) => {
-  const formattedAmount = new Intl.NumberFormat('en-US', {
+  const { preferences } = useSettings();
+  const currency = preferences?.defaultCurrency || 'NGN';
+
+  const formattedAmount = new Intl.NumberFormat('en-NG', {
     style: 'currency',
-    currency: 'USD',
+    currency: currency,
   }).format(Math.abs(transaction.amount));
 
   const isIncome = transaction.type === 'INCOME';

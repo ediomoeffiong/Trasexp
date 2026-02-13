@@ -6,7 +6,7 @@ const Preferences = () => {
     const [formData, setFormData] = useState({
         theme: 'SYSTEM',
         language: 'en',
-        defaultCurrency: 'USD',
+        defaultCurrency: 'NGN',
         defaultCategory: 'General',
         autoCategorizationToggle: true,
         taxCalculationToggle: false

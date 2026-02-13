@@ -1,6 +1,10 @@
 import React from 'react';
+import { useSettings } from '../../hooks/useSettings';
 
 const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount = false }) => {
+  const { preferences } = useSettings();
+  const currency = preferences?.defaultCurrency || 'NGN';
+
   const isPositive = type === 'income' || type === 'positive';
   const isNegative = type === 'expense' || type === 'negative';
 
@@ -9,9 +13,9 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
 
   const formattedAmount = isCount
     ? amount.toLocaleString()
-    : new Intl.NumberFormat('en-US', {
+    : new Intl.NumberFormat('en-NG', {
       style: 'currency',
-      currency: 'USD',
+      currency: currency,
     }).format(displayAmount);
 
   // Determine prefix
