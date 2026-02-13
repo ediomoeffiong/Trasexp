@@ -16,7 +16,7 @@ const LandingPage = () => {
             {/* Navigation */}
             <nav className="landing-nav">
                 <div className="container nav-container">
-                    <div className="nav-logo">Trasexp</div>
+                    <div className="nav-logo">Monetraq</div>
                     <div className="nav-actions">
                         {user ? (
                             <>
@@ -42,7 +42,7 @@ const LandingPage = () => {
                             <span className="text-gradient">Master Your Money</span>
                         </h1>
                         <p className="hero-subtitle">
-                            The smartest way to manage your personal finances. Track spending, visualize habits, and reach your financial goals with Trasexp.
+                            The smartest way to manage your personal finances. Track spending, visualize habits, and reach your financial goals with Monetraq.
                         </p>
                         <div className="hero-actions">
                             <Link to="/auth/register" className="btn btn-lg btn-primary">Start Tracking Now</Link>
@@ -68,7 +68,7 @@ const LandingPage = () => {
             <section id="features" className="features-section">
                 <div className="container">
                     <div className="section-header text-center">
-                        <h2 className="section-title">Why Choose Trasexp?</h2>
+                        <h2 className="section-title">Why Choose Monetraq?</h2>
                         <p className="section-subtitle">Everything you need to take control of your financial life.</p>
                     </div>
 
@@ -140,7 +140,7 @@ const LandingPage = () => {
                 <div className="container">
                     <div className="footer-content">
                         <div className="footer-brand">
-                            <div className="nav-logo">Trasexp</div>
+                            <div className="nav-logo">Monetraq</div>
                             <p>Making personal finance simple and accessible for everyone.</p>
                         </div>
                         <div className="footer-links">
@@ -163,7 +163,7 @@ const LandingPage = () => {
                         </div>
                     </div>
                     <div className="footer-bottom text-center">
-                        <p>&copy; {new Date().getFullYear()} Trasexp. All rights reserved.</p>
+                        <p>&copy; {new Date().getFullYear()} Monetraq. All rights reserved.</p>
                     </div>
                 </div>
             </footer>

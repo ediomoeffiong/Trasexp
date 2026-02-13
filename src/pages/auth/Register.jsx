@@ -83,7 +83,7 @@ const Register = () => {
         <div className="auth-container">
             <div className="auth-card">
                 <div className="auth-header">
-                    <Link to="/" className="auth-logo">Trasexp</Link>
+                    <Link to="/" className="auth-logo">Monetraq</Link>
                     <h2>Create Account</h2>
                     <p>Start managing your finances today</p>
                 </div>
