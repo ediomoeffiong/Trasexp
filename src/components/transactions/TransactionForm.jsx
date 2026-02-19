@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, DollarSign, Tag, AlignLeft, Check, X } from 'lucide-react';
+import { Calendar, Tag, AlignLeft, Check, X } from 'lucide-react';
+import { useSettings } from '../../hooks/useSettings';
+import { getCurrencySymbol } from '../../utils/currency';
 
 const TransactionForm = ({ onSubmit, disabled = false }) => {
+  const { preferences } = useSettings();
+  const currencySymbol = getCurrencySymbol(preferences?.defaultCurrency);
+
   const [formData, setFormData] = useState({
     title: '',
     amount: '',
@@ -56,7 +61,8 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
     if (!formData.amount) return;
     const number = parseFloat(formData.amount);
     if (!isNaN(number)) {
-      setDisplayAmount(number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      const locale = preferences?.defaultCurrency === 'NGN' ? 'en-NG' : 'en-US';
+      setDisplayAmount(number.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     }
   };
 
@@ -120,8 +126,8 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
           type="button"
           onClick={() => handleTypeChange('income')}
           className={`btn flex-1 transition-all duration-200 ${formData.type === 'income'
-              ? 'bg-success text-white shadow-md transform scale-105'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            ? 'bg-success text-white shadow-md transform scale-105'
+            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
           style={{ backgroundColor: formData.type === 'income' ? 'var(--success-color)' : '#f3f4f6', color: formData.type === 'income' ? 'white' : '#6b7280' }}
         >
@@ -131,8 +137,8 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
           type="button"
           onClick={() => handleTypeChange('expense')}
           className={`btn flex-1 transition-all duration-200 ${formData.type === 'expense'
-              ? 'bg-danger text-white shadow-md transform scale-105'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            ? 'bg-danger text-white shadow-md transform scale-105'
+            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
           style={{ backgroundColor: formData.type === 'expense' ? 'var(--danger-color)' : '#f3f4f6', color: formData.type === 'expense' ? 'white' : '#6b7280' }}
         >
@@ -147,7 +153,7 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
         </label>
         <div className="relative max-w-xs mx-auto">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <DollarSign className={themeClass} size={24} />
+            <span className={`text-2xl font-bold ${themeClass}`}>{currencySymbol}</span>
           </div>
           <input
             type="text"
@@ -156,7 +162,7 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
             value={displayAmount}
             onChange={handleAmountChange}
             onBlur={handleAmountBlur}
-            className={`form-input text-center text-3xl font-bold py-4 pl-8 pr-4 shadow-sm ${errors.amount ? 'border-red-500' : ''}`}
+            className={`form-input text-center text-3xl font-bold py-6 pl-8 pr-4 shadow-sm ${errors.amount ? 'border-red-500' : ''}`}
             placeholder="0.00"
             style={{ height: 'auto', color: isIncome ? 'var(--success-color)' : 'var(--danger-color)' }}
           />

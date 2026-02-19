@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSettings } from '../../hooks/useSettings';
+import { formatCurrency } from '../../utils/currency';
 
 const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount = false }) => {
   const { preferences } = useSettings();
-  const currency = preferences?.defaultCurrency || 'NGN';
+  const currencyCode = preferences?.defaultCurrency || 'NGN';
 
   const isPositive = type === 'income' || type === 'positive';
   const isNegative = type === 'expense' || type === 'negative';
@@ -13,10 +14,7 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
 
   const formattedAmount = isCount
     ? amount.toLocaleString()
-    : new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: currency,
-    }).format(displayAmount);
+    : formatCurrency(displayAmount, currencyCode);
 
   // Determine prefix
   let prefix = '';
@@ -50,7 +48,7 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
       <div className="summary-content">
         <div className="summary-text-group">
           <h3 className="text-muted text-xs font-medium uppercase tracking-wider mb-1">{title}</h3>
-          <p className={`summary-amount text-2xl font-bold ${typeClass}`}>{prefix}{formattedAmount}</p>
+          <p className={`summary-amount text-2xl font-bold py-2 ${typeClass}`}>{prefix}{formattedAmount}</p>
           {subtitle && <span className="summary-subtitle text-xs text-muted block mt-1">{subtitle}</span>}
 
           {trend && (

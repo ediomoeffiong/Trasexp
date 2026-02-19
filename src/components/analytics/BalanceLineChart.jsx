@@ -8,8 +8,13 @@ import {
     Area,
     AreaChart
 } from 'recharts';
+import { useSettings } from '../../hooks/useSettings';
+import { getCurrencySymbol } from '../../utils/currency';
 
 const BalanceLineChart = ({ data }) => {
+    const { preferences } = useSettings();
+    const symbol = getCurrencySymbol(preferences?.defaultCurrency);
+
     if (!data || data.length === 0) {
         return (
             <div className="flex items-center justify-center h-full min-h-[300px] text-muted">
@@ -53,10 +58,10 @@ const BalanceLineChart = ({ data }) => {
                         axisLine={false}
                         tickLine={false}
                         tick={{ fill: '#9ca3af', fontSize: 12 }}
-                        tickFormatter={(value) => `$${value}`}
+                        tickFormatter={(value) => `${symbol}${value}`}
                     />
                     <Tooltip
-                        formatter={(value) => [`$${value.toFixed(2)}`, 'Balance']}
+                        formatter={(value) => [`${symbol}${value.toFixed(2)}`, 'Balance']}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     />
                     <Area

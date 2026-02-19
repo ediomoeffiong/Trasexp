@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SummaryCard from '../components/common/SummaryCard';
 import { useSettings } from '../hooks/useSettings';
 import Loading from '../components/common/Loading';
+import { formatCurrency } from '../utils/currency';
 import { getMonthlySummary } from '../api/transactions';
 import {
   Calendar,
@@ -153,9 +154,9 @@ const MonthlySummary = () => {
                   <div key={category} className="w-full">
                     <div className="flex justify-between items-end mb-1">
                       <span className="font-bold text-main">{category}</span>
-                      <div className="text-right">
+                      <div className="text-right py-2">
                         <span className="font-bold text-danger">
-                          -{new Intl.NumberFormat('en-NG', { style: 'currency', currency: currency }).format(expense)}
+                          -{formatCurrency(expense, currency)}
                         </span>
                       </div>
                     </div>

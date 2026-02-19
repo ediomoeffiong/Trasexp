@@ -9,8 +9,13 @@ import {
     Legend,
     ResponsiveContainer
 } from 'recharts';
+import { useSettings } from '../../hooks/useSettings';
+import { getCurrencySymbol } from '../../utils/currency';
 
 const TrendsBarChart = ({ data }) => {
+    const { preferences } = useSettings();
+    const symbol = getCurrencySymbol(preferences?.defaultCurrency);
+
     if (!data || data.length === 0) {
         return (
             <div className="flex items-center justify-center h-full min-h-[300px] text-muted">
@@ -38,11 +43,11 @@ const TrendsBarChart = ({ data }) => {
                         axisLine={false}
                         tickLine={false}
                         tick={{ fill: '#9ca3af', fontSize: 12 }}
-                        tickFormatter={(value) => `$${value}`}
+                        tickFormatter={(value) => `${symbol}${value}`}
                     />
                     <Tooltip
                         cursor={{ fill: 'rgba(0,0,0,0.02)' }}
-                        formatter={(value) => [`$${value.toFixed(2)}`, '']}
+                        formatter={(value) => [`${symbol}${value.toFixed(2)}`, '']}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     />
                     <Legend iconType="rect" align="center" verticalAlign="top" height={36} />

@@ -144,7 +144,7 @@ const Dashboard = () => {
             title="Average Amount"
             amount={averageTransaction}
             type="info"
-            icon={DollarSign}
+            icon={Wallet}
             subtitle="Per transaction"
           />
         </div>

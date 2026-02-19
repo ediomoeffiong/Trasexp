@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { calculateTaxAuto } from '../../api/analytics';
+import { useSettings } from '../../hooks/useSettings';
+import { formatCurrency as formatCurrencyUtil } from '../../utils/currency';
 import './TaxCalculator.css';
 
 const COUNTRIES = [
@@ -15,6 +17,8 @@ const TAX_TYPES = [
 
 const TaxCalculator = () => {
     const currentYear = new Date().getFullYear();
+    const { preferences } = useSettings();
+    const currencyCode = preferences?.defaultCurrency || 'NGN';
 
     // State
     const [mode, setMode] = useState('automatic'); // 'automatic' or 'manual'
@@ -54,11 +58,7 @@ const TaxCalculator = () => {
     };
 
     const formatCurrency = (amount) => {
-        if (!amount) return '₦0.00';
-        return `₦${parseFloat(amount).toLocaleString('en-NG', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })}`;
+        return formatCurrencyUtil(amount || 0, currencyCode);
     };
 
     const formatPercentage = (value) => {
@@ -163,43 +163,43 @@ const TaxCalculator = () => {
                             {/* Summary Cards */}
                             <div className="tax-summary-grid">
                                 <div className="tax-summary-card">
-                                    <div className="card-label">Total Income</div>
-                                    <div className="card-value income">
+                                    <div className="card-label mb-1">Total Income</div>
+                                    <div className="card-value income font-bold py-2">
                                         {formatCurrency(result.income)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card">
-                                    <div className="card-label">Deductions/Expenses</div>
-                                    <div className="card-value expense">
+                                    <div className="card-label mb-1">Deductions/Expenses</div>
+                                    <div className="card-value expense font-bold py-2">
                                         {formatCurrency(result.expenses)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card">
-                                    <div className="card-label">Taxable {taxType === 'CIT' ? 'Profit' : 'Income'}</div>
-                                    <div className="card-value">
+                                    <div className="card-label mb-1">Taxable {taxType === 'CIT' ? 'Profit' : 'Income'}</div>
+                                    <div className="card-value font-bold py-2">
                                         {formatCurrency(result.taxableIncome)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card highlight">
-                                    <div className="card-label">Annual Tax</div>
-                                    <div className="card-value tax">
+                                    <div className="card-label mb-1">Annual Tax</div>
+                                    <div className="card-value tax font-bold py-2">
                                         {formatCurrency(result.annualTax)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card">
-                                    <div className="card-label">Monthly Tax</div>
-                                    <div className="card-value">
+                                    <div className="card-label mb-1">Monthly Tax</div>
+                                    <div className="card-value font-bold py-2">
                                         {formatCurrency(result.monthlyTax)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card">
-                                    <div className="card-label">Effective Rate</div>
-                                    <div className="card-value">
+                                    <div className="card-label mb-1">Effective Rate</div>
+                                    <div className="card-value font-bold py-2">
                                         {formatPercentage(result.effectiveRate)}
                                     </div>
                                 </div>
@@ -207,19 +207,19 @@ const TaxCalculator = () => {
 
                             {/* Breakdown */}
                             {result.breakdown && Object.keys(result.breakdown).length > 0 && (
-                                <div className="tax-breakdown">
-                                    <h3>Tax Calculation Details</h3>
+                                <div className="tax-breakdown mt-8">
+                                    <h3 className="mb-4">Tax Calculation Details</h3>
                                     <table className="breakdown-table">
                                         <tbody>
                                             {Object.entries(result.breakdown).map(([key, value]) => (
-                                                <tr key={key}>
-                                                    <td className="breakdown-label">
+                                                <tr key={key} className="border-b border-gray-100">
+                                                    <td className="breakdown-label py-4 pr-4">
                                                         {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                                                     </td>
-                                                    <td className="breakdown-value">
+                                                    <td className="breakdown-value py-4 font-medium text-right">
                                                         {typeof value === 'boolean'
                                                             ? (value ? '✅ Yes' : '❌ No')
-                                                            : typeof value === 'number' || typeof value === 'string' && !isNaN(value)
+                                                            : typeof value === 'number' || (typeof value === 'string' && !isNaN(value))
                                                                 ? formatCurrency(value)
                                                                 : value}
                                                     </td>

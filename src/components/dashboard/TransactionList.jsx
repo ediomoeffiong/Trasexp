@@ -1,16 +1,14 @@
 import React from 'react';
 import { useSettings } from '../../hooks/useSettings';
+import { formatCurrency } from '../../utils/currency';
 
 import { ArrowUpRight, ArrowDownLeft, Calendar, Tag } from 'lucide-react';
 
 const TransactionItem = ({ transaction }) => {
   const { preferences } = useSettings();
-  const currency = preferences?.defaultCurrency || 'NGN';
+  const currencyCode = preferences?.defaultCurrency || 'NGN';
 
-  const formattedAmount = new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: currency,
-  }).format(Math.abs(transaction.amount));
+  const formattedAmount = formatCurrency(Math.abs(transaction.amount), currencyCode);
 
   const isIncome = transaction.type === 'INCOME';
 
@@ -45,7 +43,7 @@ const TransactionItem = ({ transaction }) => {
           </div>
         </div>
       </div>
-      <span className={`font-bold text-lg ${isIncome ? 'text-success' : 'text-danger'}`}>
+      <span className={`font-bold text-lg px-4 ${isIncome ? 'text-success' : 'text-danger'}`}>
         {isIncome ? '+' : '-'}{formattedAmount}
       </span>
     </div>
