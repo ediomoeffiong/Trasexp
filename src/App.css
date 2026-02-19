@@ -335,9 +335,9 @@
 
 /* Navigation */
 nav {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--bg-nav);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid var(--border-nav);
   padding: 1.5rem 0;
   position: sticky;
   top: 0;

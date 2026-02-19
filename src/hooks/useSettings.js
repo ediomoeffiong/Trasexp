@@ -10,7 +10,10 @@ export const useSettings = () => {
     const [pageLoading, setPageLoading] = useState(true);
 
     // State for different settings
-    const [preferences, setPreferences] = useState(null);
+    const [preferences, setPreferences] = useState(() => {
+        const savedTheme = localStorage.getItem('trasexp-theme');
+        return savedTheme ? { theme: savedTheme } : null;
+    });
     const [notifications, setNotifications] = useState(null);
     const [profile, setProfile] = useState(null);
     const [sessions, setSessions] = useState([]);
@@ -45,10 +48,16 @@ export const useSettings = () => {
         try {
             const data = await settingsService.getUserPreferences();
             setPreferences(data);
+
+            // Sync with localStorage
+            if (data.theme) {
+                localStorage.setItem('trasexp-theme', data.theme);
+            }
+
             return data;
         } catch (error) {
             console.error('Error fetching user preferences:', error);
-            // Don't show toast for this independent load to avoid noise
+            // If we have a saved theme, don't clear it
         }
     }, []);
 
@@ -103,6 +112,12 @@ export const useSettings = () => {
         try {
             const updated = await settingsService.updateUserPreferences(data);
             setPreferences(updated);
+
+            // Save theme to localStorage for immediate persistence
+            if (updated.theme) {
+                localStorage.setItem('trasexp-theme', updated.theme);
+            }
+
             showToast('Preferences saved', 'success');
             return updated;
         } catch (error) {

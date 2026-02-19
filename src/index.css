@@ -39,6 +39,10 @@
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
+
+  /* Nav Colors */
+  --bg-nav: rgba(255, 255, 255, 0.8);
+  --border-nav: rgba(0, 0, 0, 0.05);
 }
 
 [data-theme='dark'] {
@@ -55,6 +59,8 @@
   --warning-light: rgba(245, 158, 11, 0.15);
   --primary-light: rgba(37, 99, 235, 0.15);
   --info-light: rgba(94, 114, 228, 0.15);
+  --bg-nav: rgba(15, 23, 42, 0.8);
+  --border-nav: rgba(255, 255, 255, 0.1);
 }
 
 * {
