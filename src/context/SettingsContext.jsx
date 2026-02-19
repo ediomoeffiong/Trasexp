@@ -17,6 +17,10 @@ export const SettingsProvider = ({ children }) => {
         return savedTheme ? { theme: savedTheme } : null;
     });
 
+    const [hideAmounts, setHideAmounts] = useState(() => {
+        return localStorage.getItem('trasexp-hide-amounts') === 'true';
+    });
+
     const [notifications, setNotifications] = useState(null);
     const [profile, setProfile] = useState(null);
     const [sessions, setSessions] = useState([]);
@@ -211,11 +215,21 @@ export const SettingsProvider = ({ children }) => {
         }
     };
 
+    const toggleHideAmounts = useCallback(() => {
+        setHideAmounts(prev => {
+            const newValue = !prev;
+            localStorage.setItem('trasexp-hide-amounts', newValue);
+            return newValue;
+        });
+    }, []);
+
     const value = {
         loading,
         pageLoading,
         profile,
         preferences,
+        hideAmounts,
+        toggleHideAmounts,
         notifications,
         sessions,
         loginHistory,

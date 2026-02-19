@@ -3,24 +3,39 @@ import { Calendar, Tag, AlignLeft, Check, X } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings';
 import { getCurrencySymbol } from '../../utils/currency';
 
-const TransactionForm = ({ onSubmit, disabled = false }) => {
+const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => {
   const { preferences } = useSettings();
   const currencySymbol = getCurrencySymbol(preferences?.defaultCurrency);
 
   const [formData, setFormData] = useState({
-    title: '',
-    amount: '',
-    type: 'expense',
-    category: '',
-    date: new Date().toISOString().split('T')[0], // Default to today
+    title: initialData?.title || '',
+    amount: initialData?.amount?.toString() || '',
+    type: initialData?.type?.toLowerCase() || 'expense',
+    category: initialData?.category || '',
+    date: initialData?.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0],
   });
 
   const [displayAmount, setDisplayAmount] = useState('');
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Reset form if needed, or when re-mounting
-  }, []);
+    if (initialData) {
+      setFormData({
+        title: initialData.title || '',
+        amount: initialData.amount?.toString() || '',
+        type: initialData.type?.toLowerCase() || 'expense',
+        category: initialData.category || '',
+        date: initialData.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0],
+      });
+
+      // Handle display amount formatting
+      const number = parseFloat(initialData.amount);
+      if (!isNaN(number)) {
+        const locale = preferences?.defaultCurrency === 'NGN' ? 'en-NG' : 'en-US';
+        setDisplayAmount(number.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      }
+    }
+  }, [initialData, preferences]);
 
   const categories = [
     { label: 'Food', value: 'FOOD' },
@@ -236,7 +251,7 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
             color: 'white'
           }}
         >
-          {disabled ? 'Saving...' : 'Save Transaction'}
+          {disabled ? 'Saving...' : initialData ? 'Update Transaction' : 'Save Transaction'}
         </button>
       </div>
     </form>

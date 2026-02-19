@@ -5,10 +5,12 @@ import TransactionList from '../components/dashboard/TransactionList';
 import Loading from '../components/common/Loading';
 import { getAllTransactions } from '../api/transactions';
 
-import { Wallet, TrendingUp, TrendingDown, Plus, List, Calendar, DollarSign } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, Plus, List, Calendar, DollarSign, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSettings } from '../hooks/useSettings';
 
 const Dashboard = () => {
+  const { hideAmounts, toggleHideAmounts } = useSettings();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -77,10 +79,19 @@ const Dashboard = () => {
             {error ? <span className="text-danger">Offline Mode (Backend Unreachable)</span> : "Welcome back! Here is your latest summary."}
           </p>
         </div>
-        <Link to="/transactions" className="btn btn-primary hidden-mobile">
-          <Plus size={18} className="mr-2" />
-          New Transaction
-        </Link>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleHideAmounts}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            title={hideAmounts ? "Show amounts" : "Hide amounts"}
+          >
+            {hideAmounts ? <EyeOff size={22} /> : <Eye size={22} />}
+          </button>
+          <Link to="/transactions" className="btn btn-primary hidden-mobile">
+            <Plus size={18} className="mr-2" />
+            New Transaction
+          </Link>
+        </div>
       </div>
 
       {error ? (

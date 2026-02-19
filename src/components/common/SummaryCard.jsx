@@ -3,7 +3,7 @@ import { useSettings } from '../../hooks/useSettings';
 import { formatCurrency } from '../../utils/currency';
 
 const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount = false }) => {
-  const { preferences } = useSettings();
+  const { preferences, hideAmounts } = useSettings();
   const currencyCode = preferences?.defaultCurrency || 'NGN';
 
   const isPositive = type === 'income' || type === 'positive';
@@ -25,6 +25,16 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
     }
   }
 
+  // Dynamic Padding & Font Size logic for ultra-long amounts
+  const amountLength = (prefix + formattedAmount).length;
+  let amountStyle = {};
+  if (amountLength > 15) {
+    amountStyle = { fontSize: '1.25rem', padding: '0px' };
+  } else if (amountLength > 12) {
+    amountStyle = { fontSize: '1.5rem', padding: '4px 0' };
+  }
+
+  const displayValue = hideAmounts && !isCount ? '••••' : `${prefix}${formattedAmount}`;
 
   let typeClass = '';
   let iconBgClass = '';
@@ -48,7 +58,12 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
       <div className="summary-content">
         <div className="summary-text-group">
           <h3 className="text-muted text-xs font-medium uppercase tracking-wider mb-1">{title}</h3>
-          <p className={`summary-amount text-2xl font-bold py-2 ${typeClass}`}>{prefix}{formattedAmount}</p>
+          <p
+            className={`summary-amount text-2xl font-bold py-2 ${typeClass}`}
+            style={amountStyle}
+          >
+            {displayValue}
+          </p>
           {subtitle && <span className="summary-subtitle text-xs text-muted block mt-1">{subtitle}</span>}
 
           {trend && (

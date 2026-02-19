@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, TrendingUp, TrendingDown, Inbox, X } from 'lucide-react';
-import { getAllTransactions, createTransaction } from '../api/transactions';
+import { getAllTransactions, createTransaction, updateTransaction, deleteTransaction } from '../api/transactions';
 import FilterBar from '../components/transactions/FilterBar';
 import TransactionList from '../components/dashboard/TransactionList';
 import TransactionForm from '../components/transactions/TransactionForm';
@@ -23,6 +23,8 @@ const TransactionListPage = () => {
         dateFrom: '',
         dateTo: ''
     });
+    const [editingTransaction, setEditingTransaction] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     // Fetch transactions on mount
     useEffect(() => {
@@ -99,18 +101,49 @@ const TransactionListPage = () => {
         setFormError(null);
         try {
             await createTransaction(formData);
-            // Refresh transactions list
             await fetchTransactions();
-            // Close modal
             setShowAddModal(false);
         } catch (err) {
-            if (err.response && err.response.data) {
-                setFormError(err.response.data);
-            } else {
-                setFormError({ general: 'Failed to add transaction. Please try again.' });
-            }
+            setFormError(err.response?.data || { general: 'Failed to add transaction.' });
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleUpdateTransaction = async (formData) => {
+        if (!editingTransaction) return;
+        setSubmitting(true);
+        setFormError(null);
+        try {
+            await updateTransaction(editingTransaction.id, formData);
+            await fetchTransactions();
+            setShowEditModal(false);
+            setEditingTransaction(null);
+        } catch (err) {
+            setFormError(err.response?.data || { general: 'Failed to update transaction.' });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleEdit = (transaction) => {
+        setEditingTransaction(transaction);
+        setShowEditModal(true);
+    };
+
+    const handleDelete = async (transactionOrId) => {
+        const id = typeof transactionOrId === 'object' ? transactionOrId.id : transactionOrId;
+        if (window.confirm('Are you sure you want to delete this transaction?')) {
+            try {
+                setLoading(true);
+                await deleteTransaction(id);
+                await fetchTransactions();
+            } catch (err) {
+                console.error('Failed to delete transaction:', err);
+                alert('Failed to delete transaction. Please try again.');
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -245,6 +278,8 @@ const TransactionListPage = () => {
                             <TransactionList
                                 transactions={filteredTransactions}
                                 showAll={true}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
                             />
                         </div>
                     )}
@@ -283,6 +318,40 @@ const TransactionListPage = () => {
                             <TransactionForm
                                 onSubmit={handleAddTransaction}
                                 disabled={submitting}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Transaction Modal */}
+            {showEditModal && (
+                <div className="modal-overlay fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="modal-content bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="modal-header flex justify-between items-center p-6 border-b border-gray-100">
+                            <h2 className="text-2xl font-bold">Edit Transaction</h2>
+                            <button
+                                onClick={() => {
+                                    setShowEditModal(false);
+                                    setEditingTransaction(null);
+                                    setFormError(null);
+                                }}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div className="modal-body p-6">
+                            {formError && (
+                                <div className="error-banner mb-4">
+                                    {typeof formError === 'string' ? <p>{formError}</p> :
+                                        Object.entries(formError).map(([f, m]) => <p key={f}>{m}</p>)}
+                                </div>
+                            )}
+                            <TransactionForm
+                                onSubmit={handleUpdateTransaction}
+                                disabled={submitting}
+                                initialData={editingTransaction}
                             />
                         </div>
                     </div>
