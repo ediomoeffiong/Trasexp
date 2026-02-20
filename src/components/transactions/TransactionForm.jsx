@@ -106,7 +106,15 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
       newErrors.amount = 'Please enter a valid positive amount';
     }
     if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.date) newErrors.date = 'Date is required';
+    if (!formData.date) {
+      newErrors.date = 'Date is required';
+    } else {
+      const selectedDate = new Date(formData.date).setHours(0, 0, 0, 0);
+      const today = new Date().setHours(0, 0, 0, 0);
+      if (selectedDate > today) {
+        newErrors.date = 'Future dates are not allowed. Please select today’s date or a past date.';
+      }
+    }
     return newErrors;
   };
 
@@ -234,6 +242,7 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
             name="date"
             value={formData.date}
             onChange={handleChange}
+            max={new Date().toISOString().split('T')[0]}
             className={`form-input ${errors.date ? 'border-red-500' : ''}`}
           />
           {errors.date && <span className="text-danger text-sm">{errors.date}</span>}
