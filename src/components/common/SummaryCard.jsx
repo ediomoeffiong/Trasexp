@@ -48,6 +48,9 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
   } else if (type === 'info') {
     typeClass = 'text-info';
     iconBgClass = 'bg-info-light';
+  } else if (type === 'warning') {
+    typeClass = 'text-warning';
+    iconBgClass = 'bg-warning-light';
   } else {
     typeClass = 'text-primary';
     iconBgClass = 'bg-primary-light';

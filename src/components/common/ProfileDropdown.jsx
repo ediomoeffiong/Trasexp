@@ -81,7 +81,16 @@ const ProfileDropdown = () => {
                         <span>{getInitials(user?.username)}</span>
                     )}
                 </div>
-                <span className="username hidden-mobile">{user?.username || 'User'}</span>
+                <span className="username hidden-mobile" style={{ fontWeight: 500 }}>
+                    {user?.username || 'User'}
+                </span>
+                <svg
+                    className={`chevron ${isOpen ? 'rotate' : ''}`}
+                    width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                    style={{ opacity: 0.5, marginLeft: '4px' }}
+                >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
             </button>
 
             {isOpen && (

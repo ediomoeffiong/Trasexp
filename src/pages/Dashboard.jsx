@@ -5,12 +5,33 @@ import TransactionList from '../components/dashboard/TransactionList';
 import Loading from '../components/common/Loading';
 import { getAllTransactions } from '../api/transactions';
 
-import { Wallet, TrendingUp, TrendingDown, Plus, List, Calendar, DollarSign, Eye, EyeOff } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, Plus, List, Calendar, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSettings } from '../hooks/useSettings';
+import { useAccount } from '../context/AccountContext';
+
+// Custom Premium Eye Icons (Modern geometric style)
+const EyeIcon = ({ size = 22, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3.5" strokeWidth="1.5" />
+    <circle cx="12" cy="12" r="1" fill="currentColor" />
+    <path d="M12 8v1M12 15v1M8 12h1M15 12h1" strokeWidth="1.5" opacity="0.6" />
+  </svg>
+);
+
+const EyeOffIcon = ({ size = 22, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+    <line x1="1" y1="1" x2="23" y2="23" opacity="0.8" />
+  </svg>
+);
 
 const Dashboard = () => {
   const { hideAmounts, toggleHideAmounts } = useSettings();
+  const { selectedAccountId, selectedAccount } = useAccount();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +40,7 @@ const Dashboard = () => {
     const fetchTransactions = async () => {
       try {
         setLoading(true);
-        const data = await getAllTransactions();
+        const data = await getAllTransactions({ accountId: selectedAccountId });
         setTransactions(data);
         setError(null);
       } catch (err) {
@@ -31,7 +52,7 @@ const Dashboard = () => {
     };
 
     fetchTransactions();
-  }, []);
+  }, [selectedAccountId]);
 
   // Calculate totals (safe with empty array)
   const totalIncome = transactions
@@ -46,6 +67,10 @@ const Dashboard = () => {
 
   const netBalance = totalIncome - totalExpenses;
   const totalTransactions = transactions.length;
+
+  const totalUnallocated = transactions
+    .filter(t => t.type === 'INCOME')
+    .reduce((sum, t) => sum + (t.remainingBalance || 0), 0);
 
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
@@ -85,7 +110,7 @@ const Dashboard = () => {
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
             title={hideAmounts ? "Show amounts" : "Hide amounts"}
           >
-            {hideAmounts ? <EyeOff size={22} /> : <Eye size={22} />}
+            {hideAmounts ? <EyeOffIcon size={22} /> : <EyeIcon size={22} />}
           </button>
           <Link to="/transactions" className="btn btn-primary hidden-mobile">
             <Plus size={18} className="mr-2" />
@@ -135,12 +160,11 @@ const Dashboard = () => {
             icon={Wallet}
           />
           <SummaryCard
-            title="Total Transactions"
-            amount={totalTransactions}
-            type="info"
-            icon={List}
-            isCount={true}
-            subtitle="All time"
+            title="Unallocated"
+            amount={totalUnallocated}
+            type={totalUnallocated > 0 ? 'warning' : 'info'}
+            icon={DollarSign}
+            subtitle="Ready to be spent"
           />
           <SummaryCard
             title="This Month"
@@ -152,11 +176,11 @@ const Dashboard = () => {
 
 
           <SummaryCard
-            title="Average Amount"
+            title="Average Transaction"
             amount={averageTransaction}
             type="info"
             icon={Wallet}
-            subtitle="Per transaction"
+            subtitle="Combined volume"
           />
         </div>
       )}

@@ -4,6 +4,7 @@ import { useSettings } from '../hooks/useSettings';
 import Loading from '../components/common/Loading';
 import { formatCurrency } from '../utils/currency';
 import { getMonthlySummary } from '../api/transactions';
+import { useAccount } from '../context/AccountContext';
 import {
   Calendar,
   ChevronDown,
@@ -15,6 +16,7 @@ import {
 
 const MonthlySummary = () => {
   const { preferences } = useSettings();
+  const { selectedAccountId } = useAccount();
   const currency = preferences?.defaultCurrency || 'NGN';
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -27,7 +29,7 @@ const MonthlySummary = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getMonthlySummary(selectedYear, selectedMonth);
+        const data = await getMonthlySummary(selectedYear, selectedMonth, { accountId: selectedAccountId });
         setSummaryData(data);
       } catch (err) {
         // Fallback for demo/dev if API fails (optional, but good for stability during dev)
@@ -39,7 +41,7 @@ const MonthlySummary = () => {
     };
 
     fetchSummary();
-  }, [selectedMonth, selectedYear]);
+  }, [selectedMonth, selectedYear, selectedAccountId]);
 
   const months = [
     { value: 1, label: 'January' },

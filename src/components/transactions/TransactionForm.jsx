@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Tag, AlignLeft, Check, X } from 'lucide-react';
+import { Calendar, Tag, AlignLeft, Check, X, Wallet, Coins } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings';
-import { getCurrencySymbol } from '../../utils/currency';
+import { getCurrencySymbol, formatCurrency } from '../../utils/currency';
+import { useAccount } from '../../context/AccountContext';
+import { getAvailableIncomes } from '../../api/transactions';
 
 const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => {
   const { preferences } = useSettings();
+  const { accounts, selectedAccountId } = useAccount();
   const currencySymbol = getCurrencySymbol(preferences?.defaultCurrency);
 
   const [formData, setFormData] = useState({
@@ -13,10 +16,14 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
     type: initialData?.type?.toLowerCase() || 'expense',
     category: initialData?.category || '',
     date: initialData?.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0],
+    accountId: initialData?.accountId || (selectedAccountId !== 'null' ? selectedAccountId : ''),
+    fundingIncomeId: initialData?.fundingIncomeId || ''
   });
 
   const [displayAmount, setDisplayAmount] = useState('');
   const [errors, setErrors] = useState({});
+  const [availableIncomes, setAvailableIncomes] = useState([]);
+  const [loadingIncomes, setLoadingIncomes] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -26,6 +33,8 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
         type: initialData.type?.toLowerCase() || 'expense',
         category: initialData.category || '',
         date: initialData.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0],
+        accountId: initialData.accountId || '',
+        fundingIncomeId: initialData.fundingIncomeId || ''
       });
 
       // Handle display amount formatting
@@ -34,8 +43,33 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
         const locale = preferences?.defaultCurrency === 'NGN' ? 'en-NG' : 'en-US';
         setDisplayAmount(number.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
       }
+    } else if (selectedAccountId && selectedAccountId !== 'null') {
+      setFormData(prev => ({ ...prev, accountId: selectedAccountId }));
     }
-  }, [initialData, preferences]);
+  }, [initialData, preferences, selectedAccountId]);
+
+  useEffect(() => {
+    const fetchIncomes = async () => {
+      if (formData.type === 'expense' && formData.accountId) {
+        setLoadingIncomes(true);
+        try {
+          const incomes = await getAvailableIncomes({ accountId: formData.accountId });
+          setAvailableIncomes(incomes);
+
+          // If editing and we have a fundingIncomeId, preserve it even if balance is 0 now 
+          // (Actually the API filters for remainingBalance > 0, so we might need to handle this)
+        } catch (err) {
+          console.error("Failed to fetch available incomes:", err);
+        } finally {
+          setLoadingIncomes(false);
+        }
+      } else {
+        setAvailableIncomes([]);
+      }
+    };
+
+    fetchIncomes();
+  }, [formData.type, formData.accountId]);
 
   const categories = [
     { label: 'Food', value: 'FOOD' },
@@ -106,6 +140,31 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
       newErrors.amount = 'Please enter a valid positive amount';
     }
     if (!formData.category) newErrors.category = 'Category is required';
+    if (!formData.accountId) newErrors.accountId = 'Destination account is required';
+
+    if (formData.type === 'expense') {
+      if (!formData.fundingIncomeId) {
+        newErrors.fundingIncomeId = 'Source income is required';
+      } else {
+        const selectedIncome = availableIncomes.find(inc => inc.id === parseInt(formData.fundingIncomeId));
+        const amount = parseFloat(formData.amount);
+
+        // Skip balance check for initialData if it's the SAME income source (since its balance already reflects this expense in a real scenario, 
+        // but here we are editing so we should subtract the OLD amount first conceptually)
+        // For simplicity: check if amount > remainingBalance
+        if (selectedIncome && !isNaN(amount)) {
+          let available = selectedIncome.remainingBalance;
+          // If we are editing, we add back the old amount to the available balance for validation
+          if (initialData && initialData.fundingIncomeId === selectedIncome.id) {
+            available += initialData.amount;
+          }
+          if (amount > available) {
+            newErrors.fundingIncomeId = `Insufficient balance in selected income source. Available: ${formatCurrency(available, preferences?.defaultCurrency)}`;
+          }
+        }
+      }
+    }
+
     if (!formData.date) {
       newErrors.date = 'Date is required';
     } else {
@@ -131,6 +190,8 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
       amount: parseFloat(formData.amount),
       date: `${formData.date}T00:00:00`,
       type: formData.type ? formData.type.toUpperCase() : formData.type,
+      accountId: formData.accountId,
+      fundingIncomeId: formData.type === 'expense' ? parseInt(formData.fundingIncomeId) : null,
     };
     onSubmit(dataToSubmit);
   };
@@ -194,6 +255,59 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
       </div>
 
       <div className="grid gap-4">
+        {/* Account Selection (Mandatory) */}
+        <div className="form-group">
+          <label htmlFor="accountId" className="form-label flex items-center gap-2 text-muted">
+            <Wallet size={16} /> Destination Account
+          </label>
+          <select
+            id="accountId"
+            name="accountId"
+            value={formData.accountId}
+            onChange={handleChange}
+            className={`form-select ${errors.accountId ? 'border-red-500' : ''}`}
+          >
+            <option value="">Select Account</option>
+            {accounts.map(acc => (
+              <option key={acc.id} value={acc.id}>{acc.name} ({formatCurrency(acc.balance, preferences?.defaultCurrency)})</option>
+            ))}
+          </select>
+          {errors.accountId && <span className="text-danger text-sm">{errors.accountId}</span>}
+        </div>
+
+        {/* Income Source Selection (FOR EXPENSES ONLY) */}
+        {!isIncome && (
+          <div className="form-group slide-in">
+            <label htmlFor="fundingIncomeId" className="form-label flex items-center gap-2 text-muted">
+              <Coins size={16} /> Deduct From
+            </label>
+            <select
+              id="fundingIncomeId"
+              name="fundingIncomeId"
+              value={formData.fundingIncomeId}
+              onChange={handleChange}
+              className={`form-select ${errors.fundingIncomeId ? 'border-red-500' : ''}`}
+              disabled={loadingIncomes}
+            >
+              <option value="">{loadingIncomes ? 'Loading incomes...' : 'Select Income Source'}</option>
+              {availableIncomes.map(inc => (
+                <option key={inc.id} value={inc.id}>
+                  {inc.title} ({formatCurrency(inc.remainingBalance, preferences?.defaultCurrency)} available)
+                </option>
+              ))}
+              {!loadingIncomes && availableIncomes.length === 0 && (
+                <option disabled>No income sources available in this account</option>
+              )}
+            </select>
+            {errors.fundingIncomeId && <span className="text-danger text-sm">{errors.fundingIncomeId}</span>}
+            {!errors.fundingIncomeId && availableIncomes.length === 0 && !isIncome && formData.accountId && !loadingIncomes && (
+              <p className="text-amber-600 text-[11px] mt-1 flex items-center gap-1">
+                <Check size={10} /> You need to add income to this account first.
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Title */}
         <div className="form-group">
           <label htmlFor="title" className="form-label flex items-center gap-2 text-muted">

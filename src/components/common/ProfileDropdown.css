@@ -9,10 +9,10 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem;
-    border-radius: var(--radius-lg);
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+    border-radius: 9999px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
     color: var(--text-main);
 }
 
@@ -22,18 +22,18 @@
 }
 
 .avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), #3b82f6);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 700;
+    font-size: 0.85rem;
     overflow: hidden;
-    border: 2px solid white;
+    border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
 }
 
@@ -127,5 +127,5 @@
 }
 
 .dropdown-item.logout:hover {
-    background-color: var(--bg-danger-light);
+    background-color: var(--danger-light);
 }

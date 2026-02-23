@@ -56,19 +56,19 @@ export const deleteTransaction = async (id) => {
 };
 
 // Monthly Summary API
-export const getMonthlySummary = async (year, month) => {
+export const getMonthlySummary = async (year, month, params = {}) => {
   const userId = getUserId();
   const response = await api.get('/transactions/monthly', {
-    params: { year, month, userId }
+    params: { year, month, userId, ...params }
   });
   return response.data;
 };
 
 // Analytics API
-export const getAnalyticsSummary = async () => {
+export const getAnalyticsSummary = async (params = {}) => {
   const userId = getUserId();
   const response = await api.get('/analytics/summary', {
-    params: { userId }
+    params: { ...params, userId }
   });
   return response.data;
 };
@@ -78,6 +78,15 @@ export const getTransactionsByCategory = async (category) => {
   const userId = getUserId();
   const response = await api.get('/transactions/category', {
     params: { category, userId }
+  });
+  return response.data;
+};
+
+// Available Incomes for Allocation
+export const getAvailableIncomes = async (accountId = null) => {
+  const userId = getUserId();
+  const response = await api.get('/transactions/available-incomes', {
+    params: { userId, accountId }
   });
   return response.data;
 };

@@ -6,9 +6,11 @@ import TransactionList from '../components/dashboard/TransactionList';
 import TransactionForm from '../components/transactions/TransactionForm';
 import Loading from '../components/common/Loading';
 import SummaryCard from '../components/common/SummaryCard';
+import { useAccount } from '../context/AccountContext';
 
 
 const TransactionListPage = () => {
+    const { selectedAccountId } = useAccount();
     const [transactions, setTransactions] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,15 +28,15 @@ const TransactionListPage = () => {
     const [editingTransaction, setEditingTransaction] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
 
-    // Fetch transactions on mount
+    // Fetch transactions on mount and when account changes
     useEffect(() => {
         fetchTransactions();
-    }, []);
+    }, [selectedAccountId]);
 
     const fetchTransactions = async () => {
         try {
             setLoading(true);
-            const data = await getAllTransactions();
+            const data = await getAllTransactions({ accountId: selectedAccountId });
             setTransactions(data);
             setFilteredTransactions(data);
         } catch (err) {

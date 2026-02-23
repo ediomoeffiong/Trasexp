@@ -6,16 +6,20 @@ import {
     ArrowUpRight,
     ArrowDownRight,
     TrendingDown,
-    RefreshCw
+    RefreshCw,
+    Coins
 } from 'lucide-react';
 import { getAnalyticsSummary } from '../api/transactions';
 import CategoryPieChart from '../components/analytics/CategoryPieChart';
 import TrendsBarChart from '../components/analytics/TrendsBarChart';
 import BalanceLineChart from '../components/analytics/BalanceLineChart';
 import TaxCalculator from '../components/analytics/TaxCalculator';
+import IncomeSourceBreakdown from '../components/analytics/IncomeSourceBreakdown';
 import Loading from '../components/common/Loading';
+import { useAccount } from '../context/AccountContext';
 
 const Analytics = () => {
+    const { selectedAccountId } = useAccount();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -26,7 +30,7 @@ const Analytics = () => {
             if (isRefresh) setRefreshing(true);
             else setLoading(true);
 
-            const summary = await getAnalyticsSummary();
+            const summary = await getAnalyticsSummary({ accountId: selectedAccountId });
             setData(summary);
             setError(null);
         } catch (err) {
@@ -40,7 +44,7 @@ const Analytics = () => {
 
     useEffect(() => {
         fetchAnalytics();
-    }, []);
+    }, [selectedAccountId]);
 
     if (loading) return <Loading message="Generating financial reports..." />;
 
@@ -73,8 +77,8 @@ const Analytics = () => {
                     </button>
                 </div>
             ) : !hasData ? (
-                <div className="card p-12 text-center bg-gray-50 border-dashed">
-                    <BarChart3 size={48} className="text-gray-300 mx-auto mb-4" />
+                <div className="card p-12 text-center bg-bg-page border-dashed">
+                    <BarChart3 size={48} className="text-muted mx-auto mb-4" opacity={0.3} />
                     <h2 className="text-xl font-bold mb-2">Insufficient Data</h2>
                     <p className="text-muted mb-6">
                         We need more transactions to generate meaningful insights and charts.
@@ -89,6 +93,20 @@ const Analytics = () => {
                             <h3 className="font-bold text-lg">Income vs Expenses</h3>
                         </div>
                         <TrendsBarChart data={data.monthlyTrends} />
+                    </div>
+
+                    {/* New Row: Income Allocation Status */}
+                    <div className="card p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-2">
+                                <Coins className="text-primary" size={20} />
+                                <h3 className="font-bold text-lg">Income Allocation Status</h3>
+                            </div>
+                            <span className="text-xs text-muted bg-gray-100 px-2 py-1 rounded">
+                                Zero-Based Tracking
+                            </span>
+                        </div>
+                        <IncomeSourceBreakdown data={data.incomeSourceBreakdown} />
                     </div>
 
                     {/* Bottom Grid */}

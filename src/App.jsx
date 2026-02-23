@@ -4,6 +4,7 @@ import AppRoutes from './routing/AppRoutes';
 import './App.css';
 
 import { AuthProvider } from './context/AuthContext';
+import { AccountProvider } from './context/AccountContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { ToastProvider } from './context/ToastContext';
 
@@ -13,7 +14,9 @@ function App() {
       <AuthProvider>
         <ToastProvider>
           <SettingsProvider>
-            <AppRoutes />
+            <AccountProvider>
+              <AppRoutes />
+            </AccountProvider>
           </SettingsProvider>
         </ToastProvider>
       </AuthProvider>

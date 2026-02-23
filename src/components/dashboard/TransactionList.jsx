@@ -1,11 +1,12 @@
 import React from 'react';
+import { useAccount } from '../../context/AccountContext';
 import { useSettings } from '../../hooks/useSettings';
 import { formatCurrency } from '../../utils/currency';
-
-import { ArrowUpRight, ArrowDownLeft, Calendar, Tag, Edit2, Trash2, X } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Calendar, Tag, Wallet, Trash2, X, Edit2, Coins, Info } from 'lucide-react';
 
 const TransactionItem = ({ transaction, showActions = false, onEdit, onDelete }) => {
   const { preferences, hideAmounts } = useSettings();
+  const { selectedAccountId } = useAccount();
   const [showDelete, setShowDelete] = React.useState(false);
   const currencyCode = preferences?.defaultCurrency || 'NGN';
 
@@ -13,6 +14,10 @@ const TransactionItem = ({ transaction, showActions = false, onEdit, onDelete })
   const isIncome = transaction.type === 'INCOME';
 
   const amountDisplay = hideAmounts ? '••••' : `${isIncome ? '+' : '-'}${formattedAmount}`;
+
+  // Calculate allocation percentage for income
+  const allocationPercentage = isIncome ? (transaction.allocatedAmount / transaction.amount) * 100 : 0;
+  const remainingPercent = 100 - allocationPercentage;
 
   // Format category for display
   const formatCategory = (category) => {
@@ -40,12 +45,20 @@ const TransactionItem = ({ transaction, showActions = false, onEdit, onDelete })
 
   return (
     <div className="transaction-item hover-effect group">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-1">
         <div className={`icon-circle ${isIncome ? 'bg-success-light text-success' : 'bg-danger-light text-danger'}`}>
           {isIncome ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
         </div>
-        <div className="transaction-info">
-          <span className="font-bold text-main">{transaction.title || transaction.description}</span>
+        <div className="transaction-info flex-1">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-main">{transaction.title || transaction.description}</span>
+            {transaction.fundingIncomeTitle && !isIncome && (
+              <span className="text-[10px] bg-info-light text-info px-1.5 py-0.5 rounded border border-border-nav flex items-center gap-1">
+                <Coins size={10} /> {transaction.fundingIncomeTitle}
+              </span>
+            )}
+          </div>
+
           <div className="flex items-center gap-2 text-xs text-muted mt-1">
             <div className="flex items-center gap-1">
               <Calendar size={12} />
@@ -60,7 +73,34 @@ const TransactionItem = ({ transaction, showActions = false, onEdit, onDelete })
                 </div>
               </>
             )}
+            {selectedAccountId === null && (
+              <>
+                <span>•</span>
+                <div className="flex items-center gap-1">
+                  <Wallet size={12} />
+                  <span className="account-badge">{transaction.accountName || 'Unknown Account'}</span>
+                </div>
+              </>
+            )}
           </div>
+
+          {/* Allocation Progress for Income */}
+          {isIncome && transaction.amount > 0 && (
+            <div className="mt-2 w-full max-w-[200px]">
+              <div className="flex justify-between text-[10px] mb-1">
+                <span className="text-muted">Allocation</span>
+                <span className={remainingPercent > 0 ? 'text-success font-medium' : 'text-amber-600 font-medium'}>
+                  {formatCurrency(transaction.remainingBalance, currencyCode)} remaining
+                </span>
+              </div>
+              <div className="h-1 w-full bg-input rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-500 ${remainingPercent < 10 ? 'bg-amber-500' : 'bg-success'}`}
+                  style={{ width: `${allocationPercentage}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -78,7 +118,7 @@ const TransactionItem = ({ transaction, showActions = false, onEdit, onDelete })
                 </button>
                 <button
                   onClick={handleCancelClick}
-                  className="p-1.5 text-muted hover:bg-gray-100 rounded-md transition-colors"
+                  className="p-1.5 text-muted hover:bg-input rounded-md transition-colors"
                   title="Cancel"
                 >
                   <X size={16} />

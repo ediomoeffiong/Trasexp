@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../hooks/useSettings';
+import AccountManagement from './AccountManagement';
 import Security from './Security';
 import Notifications from './Notifications';
 import Preferences from './Preferences';
@@ -46,18 +47,20 @@ const Settings = () => {
 
     const tabs = [
         { id: 'security', label: 'Security', icon: <SecurityIcon /> },
+        { id: 'accounts', label: 'Accounts', icon: <DollarSignIcon /> },
         { id: 'notifications', label: 'Notifications', icon: <BellIcon /> },
         { id: 'preferences', label: 'Preferences', icon: <SlidersIcon /> },
-        { id: 'financial', label: 'Financial', icon: <DollarSignIcon /> }, // New Financial tab
-        { id: 'compliance', label: 'Compliance', icon: <ShieldIcon /> }, // Compliance tab re-added
+        { id: 'financial', label: 'Financial', icon: <DollarSignIcon /> }, // Financial settings (cat, tax)
+        { id: 'compliance', label: 'Compliance', icon: <ShieldIcon /> },
     ];
 
     const renderContent = () => {
         switch (activeTab) {
             case 'security': return <Security />;
+            case 'accounts': return <AccountManagement />;
             case 'notifications': return <Notifications />;
             case 'preferences': return <Preferences />;
-            case 'financial': return <Financial />; // New case for Financial
+            case 'financial': return <Financial />;
             case 'compliance': return <Compliance />;
             case 'danger': return <DangerZone />;
             default: return <Security />; // Default to Security since AccountProfile is removed

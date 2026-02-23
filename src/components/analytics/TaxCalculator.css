@@ -1,8 +1,9 @@
 .tax-calculator {
     padding: 24px;
-    background: white;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
 }
 
 .tax-calculator-header {
@@ -12,7 +13,7 @@
 .tax-calculator-header h2 {
     margin: 0 0 12px 0;
     font-size: 24px;
-    color: #1f2937;
+    color: var(--text-main);
 }
 
 .disclaimer {
@@ -32,8 +33,9 @@
     gap: 16px;
     margin-bottom: 24px;
     padding: 20px;
-    background: #f9fafb;
+    background: var(--bg-page);
     border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
 .control-group {
@@ -44,16 +46,17 @@
 .control-group label {
     font-size: 14px;
     font-weight: 500;
-    color: #374151;
+    color: var(--text-secondary);
     margin-bottom: 8px;
 }
 
 .control-input {
     padding: 10px 12px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 14px;
-    background: white;
+    background: var(--bg-input);
+    color: var(--text-main);
     transition: all 0.2s;
 }
 
@@ -128,9 +131,9 @@
 
 .tax-summary-card {
     padding: 20px;
-    background: #f9fafb;
+    background: var(--bg-input);
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -161,7 +164,7 @@
 .card-value {
     font-size: 24px;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--text-main);
 }
 
 .card-value.income {
@@ -180,14 +183,15 @@
 .tax-breakdown {
     margin-top: 24px;
     padding: 20px;
-    background: #f9fafb;
+    background: var(--bg-page);
     border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
 .tax-breakdown h3 {
     margin: 0 0 16px 0;
     font-size: 18px;
-    color: #1f2937;
+    color: var(--text-main);
 }
 
 .breakdown-table {
@@ -196,7 +200,7 @@
 }
 
 .breakdown-table tr {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .breakdown-table tr:last-child {
@@ -213,7 +217,7 @@
     padding: 12px 0;
     font-size: 14px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-main);
     text-align: right;
 }
 

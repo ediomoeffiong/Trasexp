@@ -19,12 +19,27 @@ const ListIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
 );
 
+const MonetraqLogo = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="logo-icon">
+    <rect width="32" height="32" rx="8" fill="url(#logo-gradient)" />
+    <path d="M8 22V10L16 18L24 10V22" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 22H20" stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.6" />
+    <defs>
+      <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#3B82F6" />
+        <stop offset="1" stopColor="#2563EB" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
 const LogoutIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
 );
 
 import ProfileDropdown from '../components/common/ProfileDropdown';
 import MobileProfileMenu from '../components/common/MobileProfileMenu';
+import AccountSwitcher from '../components/common/AccountSwitcher';
 
 const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -46,23 +61,19 @@ const MainLayout = () => {
 
   return (
     <div>
-      <nav className={isMenuOpen ? 'menu-open' : ''}>
-        <div className="container nav-container">
-          <Link to="/" className="nav-logo">Monetraq</Link>
-
-          <div className="nav-user-info-wrapper">
-            <ProfileDropdown />
+      <nav className={`navbar ${isMenuOpen ? 'menu-open' : ''}`}>
+        <div className="container nav-content">
+          {/* Left: Logo & Account Switcher */}
+          <div className="nav-left">
+            <Link to="/" className="nav-logo-container">
+              <MonetraqLogo />
+              <span className="nav-logo-text">Monetraq</span>
+            </Link>
+            <AccountSwitcher />
           </div>
 
-          <button
-            className="mobile-menu-btn"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
-          </button>
-
-          <div className={`nav-links-wrapper ${isMenuOpen ? 'open' : ''}`}>
+          {/* Center: Navigation Links */}
+          <div className={`nav-center ${isMenuOpen ? 'mobile-open' : ''}`}>
             <ul className="nav-links">
               <li>
                 <NavLink
@@ -93,7 +104,7 @@ const MainLayout = () => {
                   onClick={closeMenu}
                 >
                   <ChartIcon />
-                  <span>Monthly Summary</span>
+                  <span>Summary</span>
                 </NavLink>
               </li>
               <li>
@@ -106,36 +117,27 @@ const MainLayout = () => {
                   <span>Analytics</span>
                 </NavLink>
               </li>
-
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="nav-link"
-                  style={{ width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}
-                >
-                  <LogoutIcon />
-                  <span>Log Out</span>
-                </button>
-              </li>
-
-              <li>
-                <button
-                  className="nav-link mobile-profile-link"
-                  onClick={() => setShowProfileMenu(true)}
-                  style={{ width: '100%', border: 'none', background: 'transparent' }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                  <span>Profile</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 'auto' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </button>
-              </li>
             </ul>
-            <MobileProfileMenu
-              isOpen={showProfileMenu}
-              onBack={() => setShowProfileMenu(false)}
-              onClose={closeMenu}
-            />
           </div>
+
+          {/* Right: User Section */}
+          <div className="nav-right">
+            <ProfileDropdown />
+
+            <button
+              className="mobile-menu-btn"
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
+            </button>
+          </div>
+
+          <MobileProfileMenu
+            isOpen={showProfileMenu}
+            onBack={() => setShowProfileMenu(false)}
+            onClose={closeMenu}
+          />
         </div>
       </nav>
       <main className="container page-content">
