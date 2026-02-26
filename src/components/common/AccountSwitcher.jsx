@@ -42,9 +42,13 @@ const AccountSwitcher = () => {
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <div className="account-info">
-                    <span className="account-label">{selectedAccount?.name || 'All Accounts'}</span>
+                    <span className="account-label">{selectedAccount?.name || 'Overall'}</span>
                     <span className="account-balance">
-                        {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(selectedAccount?.balance || overallAccount?.balance || 0)}
+                        {new Intl.NumberFormat('en-NG', {
+                            style: 'currency',
+                            currency: 'NGN',
+                            maximumFractionDigits: 0
+                        }).format(selectedAccount?.balance || overallAccount?.balance || 0)}
                     </span>
                 </div>
                 <svg

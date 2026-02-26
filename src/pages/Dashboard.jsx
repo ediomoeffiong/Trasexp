@@ -98,10 +98,10 @@ const Dashboard = () => {
   return (
     <div className="dashboard container page-content">
       <div className="dashboard-header mb-8 flex justify-between items-end">
-        <div>
+        <div className="header-text-group">
           <h1 className="text-2xl font-bold mb-1">Financial Overview</h1>
           <p className="text-muted">
-            {error ? <span className="text-danger">Offline Mode (Backend Unreachable)</span> : "Welcome back! Here is your latest summary."}
+            {error ? <span className="text-danger">Offline Mode</span> : "Welcome back! Here is your latest summary."}
           </p>
         </div>
         <div className="flex items-center gap-4">
