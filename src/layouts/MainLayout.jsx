@@ -56,7 +56,11 @@ const MainLayout = () => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
-    setTimeout(() => setShowProfileMenu(false), 300); // Reset profile menu state after transition
+    setTimeout(() => setShowProfileMenu(false), 300);
+  };
+
+  const handleMobileProfileClick = () => {
+    setShowProfileMenu(true);
   };
 
   return (
@@ -132,6 +136,8 @@ const MainLayout = () => {
               <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
             </button>
           </div>
+
+          {/* Add a specific mobile profile triggers or menu items if needed */}
 
           <MobileProfileMenu
             isOpen={showProfileMenu}

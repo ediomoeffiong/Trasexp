@@ -58,7 +58,7 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
 
   return (
     <div className="card summary-card card-fade-in">
-      <div className="summary-content">
+      <div className="summary-content-wrapper flex justify-between items-center w-full">
         <div className="summary-text-group">
           <h3 className="text-muted text-xs font-medium uppercase tracking-wider mb-1">{title}</h3>
           <p
@@ -76,7 +76,7 @@ const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount
           )}
         </div>
         {Icon && (
-          <div className={`summary-icon-container ${iconBgClass}`}>
+          <div className={`summary-icon-container flex-shrink-0 ${iconBgClass}`}>
             <Icon className={typeClass} size={24} />
           </div>
         )}

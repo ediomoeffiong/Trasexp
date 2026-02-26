@@ -280,6 +280,14 @@
   align-items: center;
 }
 
+@media (max-width: 480px) {
+  .summary-content-wrapper {
+    flex-direction: column-reverse;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+}
+
 .summary-icon-container {
   width: 48px;
   height: 48px;
@@ -365,8 +373,14 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   max-width: 1400px;
+}
+
+@media (max-width: 768px) {
+  .nav-content {
+    padding: 0 1rem;
+  }
 }
 
 .nav-left {
@@ -668,9 +682,16 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) and (min-width: 641px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
 }
@@ -833,6 +854,13 @@
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .transaction-item {
+    padding: 0.875rem;
+  }
 }
 
 .transaction-info {
@@ -1018,19 +1046,24 @@
   }
 
   .transaction-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 
   .transaction-info {
     width: 100%;
-    margin-bottom: 0.25rem;
+    order: 1;
+  }
+
+  .transaction-item>.flex.items-center.gap-4 {
+    width: 100%;
+    justify-content: space-between;
+    order: 2;
+    padding-left: 3rem;
+    /* Align with title text roughly */
   }
 
   .transaction-amount {
-    align-self: flex-end;
-    /* Move amount to right even in column mode, or maybe keep left? Let's try aligning end */
     font-size: 1.1rem;
   }
 }
@@ -1098,6 +1131,12 @@
   letter-spacing: -0.02em;
 }
 
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.25rem;
+  }
+}
+
 .text-gradient {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--success-color) 100%);
   background-clip: text;
@@ -1115,6 +1154,17 @@
 .hero-actions {
   display: flex;
   gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
 }
 
 .btn-lg {
@@ -1417,6 +1467,11 @@
     justify-content: center;
   }
 
+  .hero-glass-card {
+    height: 350px;
+    margin: 0 auto;
+  }
+
   .hero-subtitle {
     margin-left: auto;
     margin-right: auto;
@@ -1579,16 +1634,21 @@
 }
 
 .filter-bar-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .filter-group {
+  flex: 1 1 180px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.filter-group.filter-search {
+  flex: 2 1 300px;
 }
 
 .filter-label {
