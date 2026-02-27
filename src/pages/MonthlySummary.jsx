@@ -69,7 +69,7 @@ const MonthlySummary = () => {
   const maxExpense = Math.max(...sortedCategories.map(([, data]) => data.expense || 0), 1);
 
   return (
-    <div className="container page-content">
+    <div className="page-content">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold mb-1">Monthly Summary</h1>
         <p className="text-muted">

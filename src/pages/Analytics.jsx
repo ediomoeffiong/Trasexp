@@ -51,7 +51,7 @@ const Analytics = () => {
     const hasData = data && (data.categoryBreakdown?.length > 0 || data.monthlyTrends?.length > 0);
 
     return (
-        <div className="container page-content">
+        <div className="page-content">
             <div className="flex justify-between items-center mb-8">
                 <div>
                     <h1 className="text-2xl font-bold mb-1">Financial Analytics</h1>

@@ -174,7 +174,7 @@ const TransactionListPage = () => {
     const netBalance = totalIncome - totalExpenses;
 
     return (
-        <div className="container page-content">
+        <div className="page-content">
             {/* Header */}
             <div className="page-header mb-8 flex justify-between items-end">
                 <div>

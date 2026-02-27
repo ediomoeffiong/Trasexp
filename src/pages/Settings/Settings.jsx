@@ -42,7 +42,7 @@ const Settings = () => {
     }, [loadAllSettings]);
 
     if (pageLoading && !profile) {
-        return <div className="page-content container"><Loading /></div>;
+        return <div className="page-content"><Loading /></div>;
     }
 
     const tabs = [
@@ -68,7 +68,7 @@ const Settings = () => {
     };
 
     return (
-        <div className="page-content container">
+        <div className="page-content">
             <div className="mb-6">
                 <h1>Settings</h1>
                 <p className="text-muted">Manage your account settings and preferences</p>

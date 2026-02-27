@@ -4,10 +4,10 @@
     right: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--bg-surface);
+    background-color: #0b1220;
     z-index: 1000;
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
 }
@@ -20,9 +20,8 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--bg-surface);
-    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #0b1220;
 }
 
 .mpm-back-btn {
@@ -32,7 +31,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 1rem;
-    color: var(--text-main);
+    color: #ffffff;
     cursor: pointer;
     padding: 0.5rem;
 }
@@ -42,12 +41,13 @@
     text-align: center;
     font-weight: 600;
     font-size: 1.1rem;
+    color: #ffffff;
     margin-right: 28px;
 }
 
 .mpm-content {
     flex: 1;
-    padding: 2rem 1rem;
+    padding: 2rem 1.5rem;
     overflow-y: auto;
 }
 
@@ -70,8 +70,8 @@
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--bg-surface);
-    box-shadow: var(--shadow-md);
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .mpm-camera-btn {
@@ -81,14 +81,13 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background-color: var(--primary-color, #0D8ABC);
+    background-color: var(--primary-color);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .mpm-user-info {
@@ -98,12 +97,12 @@
 .mpm-user-info h3 {
     margin: 0 0 0.25rem 0;
     font-size: 1.25rem;
-    color: var(--text-main);
+    color: #ffffff;
 }
 
 .mpm-user-info p {
     margin: 0;
-    color: var(--text-muted);
+    color: #9ca3af;
     font-size: 0.9rem;
 }
 
@@ -114,30 +113,32 @@
 }
 
 .mpm-link-item {
-    background: none;
-    border: none;
-    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.25rem 1rem;
     text-align: left;
     font-size: 1rem;
-    color: var(--text-secondary);
-    border-radius: 8px;
-    transition: background-color 0.2s;
+    color: #f3f4f6;
+    border-radius: 12px;
+    transition: all 0.2s;
     cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
 }
 
 .mpm-link-item:hover,
 .mpm-link-item:active {
-    background-color: var(--bg-input);
-    color: var(--text-main);
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    transform: translateX(4px);
 }
 
 .mpm-link-item.text-danger {
-    color: var(--danger-color);
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.1);
 }
 
 .mpm-divider {
     height: 1px;
-    background-color: var(--border-color);
-    margin: 1rem 0;
+    background-color: rgba(255, 255, 255, 0.05);
+    margin: 1.5rem 0;
 }

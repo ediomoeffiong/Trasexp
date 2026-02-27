@@ -96,7 +96,7 @@ const Dashboard = () => {
     .slice(0, 5);
 
   return (
-    <div className="dashboard container page-content">
+    <div className="dashboard page-content">
       <div className="dashboard-header mb-8 flex justify-between items-end">
         <div className="header-text-group">
           <h1 className="text-2xl font-bold mb-1">Financial Overview</h1>
