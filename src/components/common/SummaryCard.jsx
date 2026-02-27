@@ -1,10 +1,13 @@
 import React from 'react';
 import { useSettings } from '../../hooks/useSettings';
+import { useAccount } from '../../context/AccountContext';
 import { formatCurrency } from '../../utils/currency';
 
 const SummaryCard = ({ title, amount, type, icon: Icon, subtitle, trend, isCount = false }) => {
   const { preferences, hideAmounts } = useSettings();
-  const currencyCode = preferences?.defaultCurrency || 'NGN';
+  const { selectedAccount } = useAccount();
+
+  const currencyCode = selectedAccount?.currency || preferences?.defaultCurrency || 'NGN';
 
   const isPositive = type === 'income' || type === 'positive';
   const isNegative = type === 'expense' || type === 'negative';

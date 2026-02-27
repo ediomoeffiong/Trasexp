@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSettings } from '../../hooks/useSettings';
+import { useAccount } from '../../context/AccountContext';
 
 const Preferences = () => {
     const { preferences, updatePreferences, loading } = useSettings();
+    const { accounts, updateAccount } = useAccount();
     const [formData, setFormData] = useState({
         theme: 'SYSTEM',
         language: 'en',
@@ -17,7 +19,7 @@ const Preferences = () => {
             setFormData({
                 theme: preferences.theme || 'SYSTEM',
                 language: preferences.language || 'en',
-                defaultCurrency: preferences.defaultCurrency || 'USD',
+                defaultCurrency: preferences.defaultCurrency || 'NGN',
                 defaultCategory: preferences.defaultCategory || 'General',
                 autoCategorizationToggle: preferences.autoCategorizationToggle ?? true,
                 taxCalculationToggle: preferences.taxCalculationToggle ?? false
@@ -35,7 +37,24 @@ const Preferences = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Update preferences
         await updatePreferences(formData);
+
+        // If currency changed, also update the default account
+        if (formData.defaultCurrency !== preferences?.defaultCurrency) {
+            const defaultAccount = accounts.find(a => a.isDefault);
+            if (defaultAccount) {
+                try {
+                    await updateAccount(defaultAccount.id, {
+                        ...defaultAccount,
+                        currency: formData.defaultCurrency
+                    });
+                } catch (err) {
+                    console.error('Failed to sync default account currency:', err);
+                }
+            }
+        }
     };
 
     return (

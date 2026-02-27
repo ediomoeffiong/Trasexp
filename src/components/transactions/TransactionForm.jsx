@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, DollarSign, Tag, AlignLeft, Check, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar, Tag, AlignLeft, Check, X } from 'lucide-react';
+import { useAccount } from '../../context/AccountContext';
+import { getCurrencySymbol } from '../../utils/currency';
 
-const TransactionForm = ({ onSubmit, disabled = false }) => {
+const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => {
+  const { selectedAccount } = useAccount();
+  const currencySymbol = getCurrencySymbol(selectedAccount?.currency || 'NGN');
+
   const [formData, setFormData] = useState({
     title: '',
     amount: '',
@@ -12,10 +17,26 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
 
   const [displayAmount, setDisplayAmount] = useState('');
   const [errors, setErrors] = useState({});
+  const dateInputRef = useRef(null);
 
   useEffect(() => {
-    // Reset form if needed, or when re-mounting
-  }, []);
+    if (initialData) {
+      setFormData({
+        title: initialData.title || '',
+        amount: initialData.amount?.toString() || '',
+        type: initialData.type?.toLowerCase() || 'expense',
+        category: initialData.category || '',
+        date: initialData.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0],
+      });
+
+      if (initialData.amount) {
+        setDisplayAmount(initialData.amount.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }));
+      }
+    }
+  }, [initialData]);
 
   const categories = [
     { label: 'Food', value: 'FOOD' },
@@ -120,8 +141,8 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
           type="button"
           onClick={() => handleTypeChange('income')}
           className={`btn flex-1 transition-all duration-200 ${formData.type === 'income'
-              ? 'bg-success text-white shadow-md transform scale-105'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            ? 'bg-success text-white shadow-md transform scale-105'
+            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
           style={{ backgroundColor: formData.type === 'income' ? 'var(--success-color)' : '#f3f4f6', color: formData.type === 'income' ? 'white' : '#6b7280' }}
         >
@@ -131,8 +152,8 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
           type="button"
           onClick={() => handleTypeChange('expense')}
           className={`btn flex-1 transition-all duration-200 ${formData.type === 'expense'
-              ? 'bg-danger text-white shadow-md transform scale-105'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            ? 'bg-danger text-white shadow-md transform scale-105'
+            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
           style={{ backgroundColor: formData.type === 'expense' ? 'var(--danger-color)' : '#f3f4f6', color: formData.type === 'expense' ? 'white' : '#6b7280' }}
         >
@@ -147,7 +168,9 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
         </label>
         <div className="relative max-w-xs mx-auto">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <DollarSign className={themeClass} size={24} />
+            <span className={`text-2xl font-bold ${themeClass}`} style={{ width: '24px', textAlign: 'center' }}>
+              {currencySymbol}
+            </span>
           </div>
           <input
             type="text"
@@ -204,13 +227,18 @@ const TransactionForm = ({ onSubmit, disabled = false }) => {
 
         {/* Date */}
         <div className="form-group">
-          <label htmlFor="date" className="form-label flex items-center gap-2 text-muted">
+          <label
+            htmlFor="date"
+            className="form-label flex items-center gap-2 text-muted cursor-pointer"
+            onClick={() => dateInputRef.current?.showPicker()}
+          >
             <Calendar size={16} /> Date
           </label>
           <input
             type="date"
             id="date"
             name="date"
+            ref={dateInputRef}
             value={formData.date}
             onChange={handleChange}
             className={`form-input ${errors.date ? 'border-red-500' : ''}`}

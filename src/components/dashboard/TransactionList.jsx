@@ -8,7 +8,7 @@ const TransactionItem = ({ transaction, showActions = false, onEdit, onDelete })
   const { preferences, hideAmounts } = useSettings();
   const { selectedAccountId } = useAccount();
   const [showDelete, setShowDelete] = React.useState(false);
-  const currencyCode = preferences?.defaultCurrency || 'NGN';
+  const currencyCode = transaction.currency || preferences?.defaultCurrency || 'NGN';
 
   const formattedAmount = formatCurrency(Math.abs(transaction.amount), currencyCode);
   const isIncome = transaction.type === 'INCOME';

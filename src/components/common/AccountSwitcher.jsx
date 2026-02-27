@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useAccount } from '../../context/AccountContext';
+import { useSettings } from '../../hooks/useSettings';
+import { formatCurrency } from '../../utils/currency';
 import PinModal from './PinModal';
 
 const AccountSwitcher = () => {

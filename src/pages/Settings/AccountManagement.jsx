@@ -32,7 +32,8 @@ const AccountManagement = () => {
         description: '',
         pin: '',
         isDefault: false,
-        pinRequired: false
+        pinRequired: false,
+        currency: 'NGN'
     });
 
     const accountTypes = [
@@ -50,7 +51,8 @@ const AccountManagement = () => {
             description: '',
             pin: '',
             isDefault: false,
-            pinRequired: false
+            pinRequired: false,
+            currency: 'NGN'
         });
         setShowCreateModal(true);
     };
@@ -63,7 +65,8 @@ const AccountManagement = () => {
             description: account.description || '',
             pin: '', // Don't show existing PIN
             isDefault: account.isDefault,
-            pinRequired: account.pinRequired
+            pinRequired: account.pinRequired,
+            currency: account.currency || 'NGN'
         });
         setShowEditModal(true);
     };
@@ -160,7 +163,7 @@ const AccountManagement = () => {
                             </div>
                             <div className="account-actions-right text-right">
                                 <div className="text-xl font-bold mb-2">
-                                    {formatCurrency(account.balance, preferences?.defaultCurrency || 'NGN')}
+                                    {formatCurrency(account.balance, account.currency || 'NGN')}
                                 </div>
                                 <div className="flex justify-end gap-2">
                                     <button
@@ -243,18 +246,40 @@ const AccountManagement = () => {
                                         </select>
                                     </div>
                                     <div className="form-group">
-                                        <label className="form-label">Account PIN (Optional)</label>
-                                        <input
-                                            type="password"
-                                            name="pin"
-                                            className="form-input"
-                                            placeholder="4 digits"
-                                            maxLength="4"
-                                            value={formData.pin}
+                                        <label className="form-label">Currency</label>
+                                        <select
+                                            name="currency"
+                                            className="form-select"
+                                            value={formData.currency}
                                             onChange={handleFormChange}
-                                        />
+                                        >
+                                            <option value="NGN">Naira (₦)</option>
+                                            <option value="USD">Dollar ($)</option>
+                                            <option value="EUR">Euro (€)</option>
+                                            <option value="GBP">Pound (£)</option>
+                                        </select>
                                     </div>
                                 </div>
+
+                                <div className="form-group mb-4">
+                                    <label className="form-label">Account PIN (Optional)</label>
+                                    <input
+                                        type="password"
+                                        name="pin"
+                                        className="form-input"
+                                        placeholder="4 digits"
+                                        maxLength="4"
+                                        value={formData.pin}
+                                        onChange={handleFormChange}
+                                    />
+                                </div>
+
+                                {showEditModal && formData.currency !== editingAccount?.currency && (
+                                    <div className="alert alert-info mb-4 flex items-center gap-2">
+                                        <AlertCircle size={18} />
+                                        <span className="text-xs">Changing currency will convert your balance and transactions using real-time rates.</span>
+                                    </div>
+                                )}
 
                                 <div className="form-group mb-4">
                                     <label className="form-label">Description (Optional)</label>
@@ -331,7 +356,7 @@ const AccountManagement = () => {
           font-size: 0.875rem;
         }
       `}</style>
-        </div>
+        </div >
     );
 };
 

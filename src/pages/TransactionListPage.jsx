@@ -6,11 +6,12 @@ import TransactionList from '../components/dashboard/TransactionList';
 import TransactionForm from '../components/transactions/TransactionForm';
 import Loading from '../components/common/Loading';
 import SummaryCard from '../components/common/SummaryCard';
+import DefaultAccountModal from '../components/common/DefaultAccountModal';
 import { useAccount } from '../context/AccountContext';
 
 
 const TransactionListPage = () => {
-    const { selectedAccountId } = useAccount();
+    // const { selectedAccountId } = useAccount(); // Removed because it's now grouped with other useAccount destructuring below
     const [transactions, setTransactions] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,8 +28,8 @@ const TransactionListPage = () => {
     });
     const [editingTransaction, setEditingTransaction] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
-
-    // Fetch transactions on mount and when account changes
+    const [showDefaultAccountModal, setShowDefaultAccountModal] = useState(false);
+    const { accounts, selectedAccountId } = useAccount();
     useEffect(() => {
         fetchTransactions();
     }, [selectedAccountId]);
@@ -102,7 +103,12 @@ const TransactionListPage = () => {
         setSubmitting(true);
         setFormError(null);
         try {
-            await createTransaction(formData);
+            // If we are in a specific account view, ensure the transaction is created for that account
+            const dataToSubmit = {
+                ...formData,
+                accountId: selectedAccountId // If null, backend uses default account
+            };
+            await createTransaction(dataToSubmit);
             await fetchTransactions();
             setShowAddModal(false);
         } catch (err) {
@@ -160,6 +166,18 @@ const TransactionListPage = () => {
         return count;
     };
 
+    // Intercept New Transaction click
+    const handleNewTransactionClick = () => {
+        if (selectedAccountId === null) {
+            const hasDefault = accounts.some(a => a.isDefault);
+            if (!hasDefault) {
+                setShowDefaultAccountModal(true);
+                return;
+            }
+        }
+        setShowAddModal(true);
+    };
+
     // Calculate statistics
     const totalIncome = filteredTransactions
         .filter(t => t.type === 'INCOME')
@@ -190,7 +208,7 @@ const TransactionListPage = () => {
                     </p>
                 </div>
                 <button
-                    onClick={() => setShowAddModal(true)}
+                    onClick={handleNewTransactionClick}
                     className="btn btn-primary hidden-mobile"
                 >
                     <Plus size={18} className="mr-2" />
@@ -268,7 +286,7 @@ const TransactionListPage = () => {
                                 Add your first income or expense to get started.
                             </p>
                             <button
-                                onClick={() => setShowAddModal(true)}
+                                onClick={handleNewTransactionClick}
                                 className="btn btn-primary"
                             >
                                 <Plus size={20} className="mr-2" />
@@ -362,12 +380,22 @@ const TransactionListPage = () => {
 
             {/* Floating Add Button (Mobile) */}
             <button
-                onClick={() => setShowAddModal(true)}
+                onClick={handleNewTransactionClick}
                 className="floating-add-btn btn btn-primary"
                 aria-label="Add transaction"
             >
                 <Plus size={24} />
             </button>
+
+            {/* Default Account Selection Modal */}
+            <DefaultAccountModal
+                isOpen={showDefaultAccountModal}
+                onClose={() => setShowDefaultAccountModal(false)}
+                onAccountSelected={() => {
+                    setShowDefaultAccountModal(false);
+                    setShowAddModal(true);
+                }}
+            />
         </div>
     );
 };

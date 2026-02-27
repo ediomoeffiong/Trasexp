@@ -21,7 +21,7 @@ export const getCurrencySymbol = (currencyCode = 'NGN') => {
         case 'GBP':
             return '£';
         default:
-            return '$';
+            return '₦';
     }
 };
 
