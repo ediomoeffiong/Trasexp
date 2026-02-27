@@ -88,7 +88,8 @@ const MainLayout = () => {
 
           {/* Center: Navigation Links */}
           <div className={`nav-center ${isMenuOpen ? 'mobile-open' : ''}`}>
-            <ul className="nav-links">
+            <div className="container">
+              <ul className="nav-links">
               <li>
                 <NavLink
                   to="/dashboard"
@@ -131,7 +132,8 @@ const MainLayout = () => {
                   <span>Analytics</span>
                 </NavLink>
               </li>
-            </ul>
+              </ul>
+            </div>
           </div>
 
           {/* Right: User Section */}
