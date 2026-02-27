@@ -130,11 +130,16 @@
 }
 
 .tax-summary-card {
-    padding: 20px;
+    padding: 20px 12px;
     background: var(--bg-input);
     border-radius: 8px;
     border: 1px solid var(--border-color);
     transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 0;
+    /* Allow shrinking */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .tax-summary-card:hover {
@@ -165,6 +170,14 @@
     font-size: 24px;
     font-weight: 700;
     color: var(--text-main);
+    word-break: break-all;
+    /* Safety net for quadrillions */
+    line-height: 1.2;
+}
+
+.income-value-wrapper {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-value.income {
@@ -219,6 +232,8 @@
     font-weight: 600;
     color: var(--text-main);
     text-align: right;
+    word-break: break-word;
+    max-width: 150px;
 }
 
 /* Responsive */

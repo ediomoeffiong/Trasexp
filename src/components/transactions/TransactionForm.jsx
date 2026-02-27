@@ -181,6 +181,7 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
             onBlur={handleAmountBlur}
             className={`form-input text-center text-3xl font-bold py-4 pl-8 pr-4 shadow-sm ${errors.amount ? 'border-red-500' : ''}`}
             placeholder="0.00"
+            maxLength="15"
             style={{ height: 'auto', color: isIncome ? 'var(--success-color)' : 'var(--danger-color)' }}
           />
         </div>

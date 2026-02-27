@@ -6,6 +6,7 @@ import PinModal from './PinModal';
 
 const AccountSwitcher = () => {
     const { accounts, selectedAccountId, selectedAccount, overallAccount, selectAccount, verifyPin } = useAccount();
+    const { preferences } = useSettings();
     const [isOpen, setIsOpen] = useState(false);
     const [isPinModalOpen, setIsPinModalOpen] = useState(false);
     const [pendingAccount, setPendingAccount] = useState(null);
@@ -45,12 +46,22 @@ const AccountSwitcher = () => {
             >
                 <div className="account-info">
                     <span className="account-label">{selectedAccount?.name || 'Overall'}</span>
-                    <span className="account-balance">
-                        {new Intl.NumberFormat('en-NG', {
-                            style: 'currency',
-                            currency: 'NGN',
-                            maximumFractionDigits: 0
-                        }).format(selectedAccount?.balance || overallAccount?.balance || 0)}
+                    <span
+                        className="account-balance"
+                        style={(() => {
+                            const rawBalance = selectedAccount?.balance || overallAccount?.balance || 0;
+                            const currency = selectedAccount?.currency || preferences?.defaultCurrency || 'NGN';
+                            const formatted = formatCurrency(rawBalance, currency);
+                            const len = formatted.length;
+                            if (len > 15) return { fontSize: '0.7rem' };
+                            if (len > 12) return { fontSize: '0.8rem' };
+                            return {};
+                        })()}
+                    >
+                        {selectedAccount || overallAccount ?
+                            formatCurrency(selectedAccount?.balance || overallAccount?.balance || 0, selectedAccount?.currency || preferences?.defaultCurrency || 'NGN') :
+                            'N/A'
+                        }
                     </span>
                 </div>
                 <svg
@@ -71,8 +82,18 @@ const AccountSwitcher = () => {
                             <span className="name">{overallAccount.name}</span>
                             <span className="type">Aggregate View</span>
                         </div>
-                        <div className="account-item-balance">
-                            {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(overallAccount.balance || 0)}
+                        <div
+                            className="account-item-balance"
+                            style={(() => {
+                                const formatted = formatCurrency(overallAccount.balance || 0, preferences?.defaultCurrency || 'NGN');
+                                const len = formatted.length;
+                                if (len > 25) return { fontSize: '0.65rem' };
+                                if (len > 20) return { fontSize: '0.75rem' };
+                                if (len > 15) return { fontSize: '0.85rem' };
+                                return {};
+                            })()}
+                        >
+                            {formatCurrency(overallAccount.balance || 0, preferences?.defaultCurrency || 'NGN')}
                         </div>
                     </div>
                     <div className="dropdown-divider"></div>
@@ -86,8 +107,18 @@ const AccountSwitcher = () => {
                                 <span className="name">{account.name}</span>
                                 <span className="type">{account.type}</span>
                             </div>
-                            <div className="account-item-balance">
-                                {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(account.balance || 0)}
+                            <div
+                                className="account-item-balance"
+                                style={(() => {
+                                    const formatted = formatCurrency(account.balance || 0, account.currency || preferences?.defaultCurrency || 'NGN');
+                                    const len = formatted.length;
+                                    if (len > 25) return { fontSize: '0.65rem' };
+                                    if (len > 20) return { fontSize: '0.75rem' };
+                                    if (len > 15) return { fontSize: '0.85rem' };
+                                    return {};
+                                })()}
+                            >
+                                {formatCurrency(account.balance || 0, account.currency || preferences?.defaultCurrency || 'NGN')}
                             </div>
                             {account.pinRequired && (
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon" style={{ marginLeft: '8px', opacity: 0.6 }}>

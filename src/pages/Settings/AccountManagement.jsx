@@ -33,7 +33,8 @@ const AccountManagement = () => {
         pin: '',
         isDefault: false,
         pinRequired: false,
-        currency: 'NGN'
+        currency: 'NGN',
+        includeInOverall: true
     });
 
     const accountTypes = [
@@ -52,7 +53,8 @@ const AccountManagement = () => {
             pin: '',
             isDefault: false,
             pinRequired: false,
-            currency: 'NGN'
+            currency: 'NGN',
+            includeInOverall: true
         });
         setShowCreateModal(true);
     };
@@ -66,7 +68,8 @@ const AccountManagement = () => {
             pin: '', // Don't show existing PIN
             isDefault: account.isDefault,
             pinRequired: account.pinRequired,
-            currency: account.currency || 'NGN'
+            currency: account.currency || 'NGN',
+            includeInOverall: account.includeInOverall ?? true
         });
         setShowEditModal(true);
     };
@@ -320,6 +323,20 @@ const AccountManagement = () => {
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-sm">Require PIN for Access</span>
                                             <span className="text-xs text-muted">Protect sensitive accounts with a security PIN</span>
+                                        </div>
+                                    </label>
+
+                                    <label className="flex items-center gap-3 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            name="includeInOverall"
+                                            checked={formData.includeInOverall}
+                                            onChange={handleFormChange}
+                                            className="w-4 h-4 rounded text-primary focus:ring-primary"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="font-semibold text-sm">Include in Overall Summary</span>
+                                            <span className="text-xs text-muted">Include this account's data in the aggregate dashboard view</span>
                                         </div>
                                     </label>
                                 </div>

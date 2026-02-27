@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { calculateTaxAuto } from '../../api/analytics';
 import { useSettings } from '../../hooks/useSettings';
+import { useAccount } from '../../context/AccountContext';
 import { formatCurrency as formatCurrencyUtil } from '../../utils/currency';
 import './TaxCalculator.css';
 
@@ -18,6 +19,7 @@ const TAX_TYPES = [
 const TaxCalculator = () => {
     const currentYear = new Date().getFullYear();
     const { preferences } = useSettings();
+    const { selectedAccountId } = useAccount();
     const currencyCode = preferences?.defaultCurrency || 'NGN';
 
     // State
@@ -34,7 +36,7 @@ const TaxCalculator = () => {
         if (mode === 'automatic') {
             calculateTax();
         }
-    }, [country, taxType, year, mode]);
+    }, [country, taxType, year, mode, selectedAccountId]);
 
     const calculateTax = async () => {
         setLoading(true);
@@ -44,7 +46,8 @@ const TaxCalculator = () => {
             const params = {
                 type: taxType,
                 country: country,
-                year: year
+                year: year,
+                accountId: selectedAccountId
             };
 
             const data = await calculateTaxAuto(params);
@@ -64,6 +67,26 @@ const TaxCalculator = () => {
     const formatPercentage = (value) => {
         if (!value) return '0%';
         return `${value.toFixed(2)}%`;
+    };
+
+    const getShrinkStyle = (amount, baseSize = '1.5rem', type = 'card') => {
+        if (amount === undefined || amount === null) return {};
+        const formatted = formatCurrency(amount);
+        const len = formatted.length;
+
+        if (type === 'card') {
+            if (len > 25) return { fontSize: '0.8rem', lineHeight: '1.2' };
+            if (len > 22) return { fontSize: '1rem', lineHeight: '1.2' };
+            if (len > 18) return { fontSize: '1.25rem', lineHeight: '1.2' };
+            if (len > 15) return { fontSize: baseSize };
+            return { fontSize: '1.75rem' }; // Default for card
+        } else {
+            // Table/Dropdown type
+            if (len > 25) return { fontSize: '0.65rem' };
+            if (len > 20) return { fontSize: '0.75rem' };
+            if (len > 15) return { fontSize: '0.85rem' };
+            return {};
+        }
     };
 
     // Generate year options (current year and past 5 years)
@@ -164,35 +187,50 @@ const TaxCalculator = () => {
                             <div className="tax-summary-grid">
                                 <div className="tax-summary-card">
                                     <div className="card-label mb-1">Total Income</div>
-                                    <div className="card-value income font-bold py-2">
+                                    <div
+                                        className="card-value income font-bold py-2"
+                                        style={getShrinkStyle(result.income, '1.5rem', 'card')}
+                                    >
                                         {formatCurrency(result.income)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card">
                                     <div className="card-label mb-1">Deductions/Expenses</div>
-                                    <div className="card-value expense font-bold py-2">
+                                    <div
+                                        className="card-value expense font-bold py-2"
+                                        style={getShrinkStyle(result.expenses, '1.5rem', 'card')}
+                                    >
                                         {formatCurrency(result.expenses)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card">
                                     <div className="card-label mb-1">Taxable {taxType === 'CIT' ? 'Profit' : 'Income'}</div>
-                                    <div className="card-value font-bold py-2">
+                                    <div
+                                        className="card-value font-bold py-2"
+                                        style={getShrinkStyle(result.taxableIncome, '1.5rem', 'card')}
+                                    >
                                         {formatCurrency(result.taxableIncome)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card highlight">
                                     <div className="card-label mb-1">Annual Tax</div>
-                                    <div className="card-value tax font-bold py-2">
+                                    <div
+                                        className="card-value tax font-bold py-2"
+                                        style={getShrinkStyle(result.annualTax, '1.5rem', 'card')}
+                                    >
                                         {formatCurrency(result.annualTax)}
                                     </div>
                                 </div>
 
                                 <div className="tax-summary-card">
                                     <div className="card-label mb-1">Monthly Tax</div>
-                                    <div className="card-value font-bold py-2">
+                                    <div
+                                        className="card-value font-bold py-2"
+                                        style={getShrinkStyle(result.monthlyTax, '1.5rem', 'card')}
+                                    >
                                         {formatCurrency(result.monthlyTax)}
                                     </div>
                                 </div>
@@ -216,7 +254,10 @@ const TaxCalculator = () => {
                                                     <td className="breakdown-label py-4 pr-4">
                                                         {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                                                     </td>
-                                                    <td className="breakdown-value py-4 font-medium text-right">
+                                                    <td
+                                                        className="breakdown-value py-4 font-medium text-right"
+                                                        style={getShrinkStyle(value, '0.85rem', 'table')}
+                                                    >
                                                         {typeof value === 'boolean'
                                                             ? (value ? '✅ Yes' : '❌ No')
                                                             : typeof value === 'number' || (typeof value === 'string' && !isNaN(value))

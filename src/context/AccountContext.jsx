@@ -21,7 +21,7 @@ export const AccountProvider = ({ children }) => {
         name: 'Overall Account',
         type: 'OVERALL',
         isDefault: false,
-        balance: accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0),
+        balance: accounts.filter(acc => acc.includeInOverall !== false).reduce((sum, acc) => sum + (acc.balance || 0), 0),
         isOverall: true
     };
 

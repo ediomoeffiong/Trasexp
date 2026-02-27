@@ -633,6 +633,8 @@
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.2s;
+  gap: 12px;
+  min-width: 0;
 }
 
 .account-item:hover {
@@ -646,12 +648,18 @@
 .account-item-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  flex: 1;
 }
 
 .account-item-info .name {
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .account-item-info .type {
@@ -1163,7 +1171,7 @@
   z-index: 100;
 }
 
-.mobile-profile-link {
+.mobile-only {
   display: none !important;
 }
 
@@ -1236,9 +1244,12 @@
   }
 
   /* mobile slide-in nav */
-  .nav-center {
+  .nav-center.mobile-nav {
     position: fixed;
-    top: 64px;
+    top: 0;
+    /* Cover everything including navbar background if needed, or start from 64px */
+    padding-top: 64px;
+    /* Start content after navbar height */
     left: 0;
     right: 0;
     bottom: 0;
@@ -1246,32 +1257,80 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /* match container padding so menu aligns with page content */
-    padding: 1.5rem 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 2rem;
     overflow-y: auto;
     transform: translateX(100%);
-    transition: transform 0.35s ease-in-out, visibility 0.35s ease-in-out;
-    z-index: 200;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    /* High z-index to overlay everything */
     visibility: hidden;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
   }
 
-  .nav-center.mobile-open {
+  .nav-center.mobile-nav.mobile-open {
     transform: translateX(0);
     visibility: visible !important;
     display: flex !important;
   }
 
+  /* Mobile User Profile Styling */
+  .mobile-user-profile {
+    margin-bottom: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .user-info-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .user-info-main .avatar {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .user-info-main .user-text h3 {
+    color: white;
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .user-info-main .user-text p {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    margin: 4px 0 0 0;
+  }
+
+  .mobile-only {
+    display: flex !important;
+  }
+
   /* finer alignment adjustments on narrower phones */
   @media (max-width: 640px) {
-    .nav-center {
-      padding: 1.25rem 1rem;
+    .nav-center.mobile-nav {
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
   }
 
   @media (max-width: 480px) {
-    .nav-center {
-      padding: 1rem 0.75rem;
+    .nav-center.mobile-nav {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
     }
 
     .nav-link {
@@ -1303,16 +1362,19 @@
     color: #ffffff;
     /* ensure high contrast on dark background */
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 0;
-    transition: background 0.2s;
+    border-radius: 12px;
+    transition: all 0.2s ease;
   }
 
   .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(4px);
   }
 
   .nav-link svg {
     color: #9ca3af;
+    width: 20px;
+    height: 20px;
   }
 
   .nav-link.active {
@@ -1570,6 +1632,11 @@
 .features-section {
   padding: 6rem 0;
   background: white;
+}
+
+/* dark mode adjustment: match other page backgrounds */
+[data-theme='dark'] .features-section {
+  background: #111827;
 }
 
 .section-title {
