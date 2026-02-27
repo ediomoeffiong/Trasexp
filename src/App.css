@@ -1233,6 +1233,7 @@
     display: block;
   }
 
+  /* mobile slide-in nav */
   .nav-center {
     position: fixed;
     top: 64px;
@@ -1243,10 +1244,11 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 1.5rem;
+    padding: 1.5rem 1.25rem;
+    overflow-y: auto;
     transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
-    z-index: 100;
+    transition: transform 0.35s ease-in-out, visibility 0.35s ease-in-out;
+    z-index: 200;
     visibility: hidden;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
   }
@@ -1256,6 +1258,10 @@
     visibility: visible;
   }
 
+/* prevent background scroll when menu is open */
+body.menu-open {
+  overflow: hidden;
+}
   .nav-links {
     flex-direction: column;
     background: transparent;
@@ -1267,10 +1273,15 @@
     width: 100%;
     padding: 1.25rem 1rem;
     font-size: 1.125rem;
-    color: #f3f4f6;
-    /* High contrast gray on dark bg */
+    color: #ffffff;
+    /* ensure high contrast on dark background */
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 0;
+    transition: background 0.2s;
+  }
+
+  .nav-link:hover {
+    background: rgba(255,255,255,0.1);
   }
 
   .nav-link svg {

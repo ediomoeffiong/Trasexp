@@ -54,6 +54,16 @@ const MainLayout = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  // lock scroll when mobile menu is open
+  React.useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
+    return () => document.body.classList.remove('menu-open');
+  }, [isMenuOpen]);
+
   const closeMenu = () => {
     setIsMenuOpen(false);
     setTimeout(() => setShowProfileMenu(false), 300);
