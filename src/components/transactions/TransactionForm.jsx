@@ -1,75 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Tag, AlignLeft, Check, X, Wallet, Coins } from 'lucide-react';
-import { useSettings } from '../../hooks/useSettings';
-import { getCurrencySymbol, formatCurrency } from '../../utils/currency';
-import { useAccount } from '../../context/AccountContext';
-import { getAvailableIncomes } from '../../api/transactions';
+import { Calendar, DollarSign, Tag, AlignLeft, Check, X } from 'lucide-react';
 
-const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => {
-  const { preferences } = useSettings();
-  const { accounts, selectedAccountId } = useAccount();
-  const currencySymbol = getCurrencySymbol(preferences?.defaultCurrency);
-
+const TransactionForm = ({ onSubmit, disabled = false }) => {
   const [formData, setFormData] = useState({
-    title: initialData?.title || '',
-    amount: initialData?.amount?.toString() || '',
-    type: initialData?.type?.toLowerCase() || 'expense',
-    category: initialData?.category || '',
-    date: initialData?.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0],
-    accountId: initialData?.accountId || (selectedAccountId !== 'null' ? selectedAccountId : ''),
-    fundingIncomeId: initialData?.fundingIncomeId || ''
+    title: '',
+    amount: '',
+    type: 'expense',
+    category: '',
+    date: new Date().toISOString().split('T')[0], // Default to today
   });
 
   const [displayAmount, setDisplayAmount] = useState('');
   const [errors, setErrors] = useState({});
-  const [availableIncomes, setAvailableIncomes] = useState([]);
-  const [loadingIncomes, setLoadingIncomes] = useState(false);
 
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        title: initialData.title || '',
-        amount: initialData.amount?.toString() || '',
-        type: initialData.type?.toLowerCase() || 'expense',
-        category: initialData.category || '',
-        date: initialData.date ? initialData.date.split('T')[0] : new Date().toISOString().split('T')[0],
-        accountId: initialData.accountId || '',
-        fundingIncomeId: initialData.fundingIncomeId || ''
-      });
-
-      // Handle display amount formatting
-      const number = parseFloat(initialData.amount);
-      if (!isNaN(number)) {
-        const locale = preferences?.defaultCurrency === 'NGN' ? 'en-NG' : 'en-US';
-        setDisplayAmount(number.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-      }
-    } else if (selectedAccountId && selectedAccountId !== 'null') {
-      setFormData(prev => ({ ...prev, accountId: selectedAccountId }));
-    }
-  }, [initialData, preferences, selectedAccountId]);
-
-  useEffect(() => {
-    const fetchIncomes = async () => {
-      if (formData.type === 'expense' && formData.accountId) {
-        setLoadingIncomes(true);
-        try {
-          const incomes = await getAvailableIncomes({ accountId: formData.accountId });
-          setAvailableIncomes(incomes);
-
-          // If editing and we have a fundingIncomeId, preserve it even if balance is 0 now 
-          // (Actually the API filters for remainingBalance > 0, so we might need to handle this)
-        } catch (err) {
-          console.error("Failed to fetch available incomes:", err);
-        } finally {
-          setLoadingIncomes(false);
-        }
-      } else {
-        setAvailableIncomes([]);
-      }
-    };
-
-    fetchIncomes();
-  }, [formData.type, formData.accountId]);
+    // Reset form if needed, or when re-mounting
+  }, []);
 
   const categories = [
     { label: 'Food', value: 'FOOD' },
@@ -110,8 +56,7 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
     if (!formData.amount) return;
     const number = parseFloat(formData.amount);
     if (!isNaN(number)) {
-      const locale = preferences?.defaultCurrency === 'NGN' ? 'en-NG' : 'en-US';
-      setDisplayAmount(number.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      setDisplayAmount(number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     }
   };
 
@@ -140,40 +85,7 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
       newErrors.amount = 'Please enter a valid positive amount';
     }
     if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.accountId) newErrors.accountId = 'Destination account is required';
-
-    if (formData.type === 'expense') {
-      if (!formData.fundingIncomeId) {
-        newErrors.fundingIncomeId = 'Source income is required';
-      } else {
-        const selectedIncome = availableIncomes.find(inc => inc.id === parseInt(formData.fundingIncomeId));
-        const amount = parseFloat(formData.amount);
-
-        // Skip balance check for initialData if it's the SAME income source (since its balance already reflects this expense in a real scenario, 
-        // but here we are editing so we should subtract the OLD amount first conceptually)
-        // For simplicity: check if amount > remainingBalance
-        if (selectedIncome && !isNaN(amount)) {
-          let available = selectedIncome.remainingBalance;
-          // If we are editing, we add back the old amount to the available balance for validation
-          if (initialData && initialData.fundingIncomeId === selectedIncome.id) {
-            available += initialData.amount;
-          }
-          if (amount > available) {
-            newErrors.fundingIncomeId = `Insufficient balance in selected income source. Available: ${formatCurrency(available, preferences?.defaultCurrency)}`;
-          }
-        }
-      }
-    }
-
-    if (!formData.date) {
-      newErrors.date = 'Date is required';
-    } else {
-      const selectedDate = new Date(formData.date).setHours(0, 0, 0, 0);
-      const today = new Date().setHours(0, 0, 0, 0);
-      if (selectedDate > today) {
-        newErrors.date = 'Future dates are not allowed. Please select today’s date or a past date.';
-      }
-    }
+    if (!formData.date) newErrors.date = 'Date is required';
     return newErrors;
   };
 
@@ -190,8 +102,6 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
       amount: parseFloat(formData.amount),
       date: `${formData.date}T00:00:00`,
       type: formData.type ? formData.type.toUpperCase() : formData.type,
-      accountId: formData.accountId,
-      fundingIncomeId: formData.type === 'expense' ? parseInt(formData.fundingIncomeId) : null,
     };
     onSubmit(dataToSubmit);
   };
@@ -210,8 +120,8 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
           type="button"
           onClick={() => handleTypeChange('income')}
           className={`btn flex-1 transition-all duration-200 ${formData.type === 'income'
-            ? 'bg-success text-white shadow-md transform scale-105'
-            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              ? 'bg-success text-white shadow-md transform scale-105'
+              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
           style={{ backgroundColor: formData.type === 'income' ? 'var(--success-color)' : '#f3f4f6', color: formData.type === 'income' ? 'white' : '#6b7280' }}
         >
@@ -221,8 +131,8 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
           type="button"
           onClick={() => handleTypeChange('expense')}
           className={`btn flex-1 transition-all duration-200 ${formData.type === 'expense'
-            ? 'bg-danger text-white shadow-md transform scale-105'
-            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              ? 'bg-danger text-white shadow-md transform scale-105'
+              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}
           style={{ backgroundColor: formData.type === 'expense' ? 'var(--danger-color)' : '#f3f4f6', color: formData.type === 'expense' ? 'white' : '#6b7280' }}
         >
@@ -237,7 +147,7 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
         </label>
         <div className="relative max-w-xs mx-auto">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className={`text-2xl font-bold ${themeClass}`}>{currencySymbol}</span>
+            <DollarSign className={themeClass} size={24} />
           </div>
           <input
             type="text"
@@ -246,7 +156,7 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
             value={displayAmount}
             onChange={handleAmountChange}
             onBlur={handleAmountBlur}
-            className={`form-input text-center text-3xl font-bold py-6 pl-8 pr-4 shadow-sm ${errors.amount ? 'border-red-500' : ''}`}
+            className={`form-input text-center text-3xl font-bold py-4 pl-8 pr-4 shadow-sm ${errors.amount ? 'border-red-500' : ''}`}
             placeholder="0.00"
             style={{ height: 'auto', color: isIncome ? 'var(--success-color)' : 'var(--danger-color)' }}
           />
@@ -255,59 +165,6 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
       </div>
 
       <div className="grid gap-4">
-        {/* Account Selection (Mandatory) */}
-        <div className="form-group">
-          <label htmlFor="accountId" className="form-label flex items-center gap-2 text-muted">
-            <Wallet size={16} /> Destination Account
-          </label>
-          <select
-            id="accountId"
-            name="accountId"
-            value={formData.accountId}
-            onChange={handleChange}
-            className={`form-select ${errors.accountId ? 'border-red-500' : ''}`}
-          >
-            <option value="">Select Account</option>
-            {accounts.map(acc => (
-              <option key={acc.id} value={acc.id}>{acc.name} ({formatCurrency(acc.balance, preferences?.defaultCurrency)})</option>
-            ))}
-          </select>
-          {errors.accountId && <span className="text-danger text-sm">{errors.accountId}</span>}
-        </div>
-
-        {/* Income Source Selection (FOR EXPENSES ONLY) */}
-        {!isIncome && (
-          <div className="form-group slide-in">
-            <label htmlFor="fundingIncomeId" className="form-label flex items-center gap-2 text-muted">
-              <Coins size={16} /> Deduct From
-            </label>
-            <select
-              id="fundingIncomeId"
-              name="fundingIncomeId"
-              value={formData.fundingIncomeId}
-              onChange={handleChange}
-              className={`form-select ${errors.fundingIncomeId ? 'border-red-500' : ''}`}
-              disabled={loadingIncomes}
-            >
-              <option value="">{loadingIncomes ? 'Loading incomes...' : 'Select Income Source'}</option>
-              {availableIncomes.map(inc => (
-                <option key={inc.id} value={inc.id}>
-                  {inc.title} ({formatCurrency(inc.remainingBalance, preferences?.defaultCurrency)} available)
-                </option>
-              ))}
-              {!loadingIncomes && availableIncomes.length === 0 && (
-                <option disabled>No income sources available in this account</option>
-              )}
-            </select>
-            {errors.fundingIncomeId && <span className="text-danger text-sm">{errors.fundingIncomeId}</span>}
-            {!errors.fundingIncomeId && availableIncomes.length === 0 && !isIncome && formData.accountId && !loadingIncomes && (
-              <p className="text-amber-600 text-[11px] mt-1 flex items-center gap-1">
-                <Check size={10} /> You need to add income to this account first.
-              </p>
-            )}
-          </div>
-        )}
-
         {/* Title */}
         <div className="form-group">
           <label htmlFor="title" className="form-label flex items-center gap-2 text-muted">
@@ -356,7 +213,6 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
             name="date"
             value={formData.date}
             onChange={handleChange}
-            max={new Date().toISOString().split('T')[0]}
             className={`form-input ${errors.date ? 'border-red-500' : ''}`}
           />
           {errors.date && <span className="text-danger text-sm">{errors.date}</span>}
@@ -374,7 +230,7 @@ const TransactionForm = ({ onSubmit, disabled = false, initialData = null }) => 
             color: 'white'
           }}
         >
-          {disabled ? 'Saving...' : initialData ? 'Update Transaction' : 'Save Transaction'}
+          {disabled ? 'Saving...' : 'Save Transaction'}
         </button>
       </div>
     </form>

@@ -234,3 +234,60 @@ input:checked+.slider:before {
         padding: 1.5rem 1rem;
     }
 }
+
+@media (max-width: 640px) {
+    .settings-container {
+        gap: 1.25rem;
+    }
+
+    .settings-content {
+        padding: 1.25rem 1rem;
+        min-height: 400px;
+    }
+
+    .settings-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .settings-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .settings-section {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-tab {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .settings-tab svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .settings-content {
+        padding: 1rem;
+        min-height: auto;
+    }
+
+    .settings-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .settings-header h2 {
+        font-size: 1.125rem;
+    }
+
+    .settings-section {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+}

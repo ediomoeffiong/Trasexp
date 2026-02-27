@@ -239,3 +239,93 @@
         font-size: 20px;
     }
 }
+
+@media (max-width: 640px) {
+    .tax-calculator {
+        padding: 14px;
+    }
+
+    .tax-controls {
+        padding: 16px;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .tax-summary-card {
+        padding: 16px;
+    }
+
+    .card-value {
+        font-size: 18px;
+    }
+
+    .tax-breakdown {
+        padding: 16px;
+        margin-top: 16px;
+    }
+
+    .tax-breakdown h3 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tax-calculator {
+        padding: 12px;
+    }
+
+    .tax-calculator-header {
+        margin-bottom: 16px;
+    }
+
+    .tax-calculator-header h2 {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .disclaimer {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .tax-controls {
+        padding: 12px;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .control-input {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .tax-summary-grid {
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .tax-summary-card {
+        padding: 12px;
+    }
+
+    .card-label {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+
+    .card-value {
+        font-size: 16px;
+    }
+
+    .tax-breakdown {
+        padding: 12px;
+        margin-top: 12px;
+    }
+
+    .breakdown-label,
+    .breakdown-value {
+        padding: 8px 0;
+        font-size: 12px;
+    }
+}
