@@ -1176,6 +1176,22 @@
   transition: all 0.3s ease-in-out;
 }
 
+/* mobile variant: adjust color when menu is open to ensure contrast */
+@media (max-width: 768px) {
+  /* default remains text-main so icon shows on light navbar */
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    background: var(--text-main);
+  }
+
+  body.menu-open .hamburger,
+  body.menu-open .hamburger::before,
+  body.menu-open .hamburger::after {
+    background: #ffffff !important;
+  }
+}
+
 .hamburger::before,
 .hamburger::after {
   content: '';
@@ -1187,15 +1203,13 @@
   left: 0;
 }
 
-.hamburger::before {
-  top: -8px;
+/* make lines white when icon visible on dark background */
+@media (max-width: 768px) {
+  .hamburger::before,
+  .hamburger::after {
+    background: #ffffff !important;
+  }
 }
-
-.hamburger::after {
-  top: 8px;
-}
-
-.hamburger.open {
   background: transparent;
 }
 
