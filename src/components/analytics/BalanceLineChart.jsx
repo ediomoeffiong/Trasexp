@@ -39,7 +39,7 @@ const BalanceLineChart = ({ data }) => {
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <AreaChart
                     data={chartData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    margin={{ top: 20, right: 30, left: 60, bottom: 5 }}
                 >
                     <defs>
                         <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
@@ -59,6 +59,7 @@ const BalanceLineChart = ({ data }) => {
                         tickLine={false}
                         tick={{ fill: '#9ca3af', fontSize: 12 }}
                         tickFormatter={(value) => `${symbol}${value}`}
+                        width={60}
                     />
                     <Tooltip
                         formatter={(value) => [`${symbol}${value.toFixed(2)}`, 'Balance']}

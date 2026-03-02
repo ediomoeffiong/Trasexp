@@ -30,7 +30,7 @@ const TrendsBarChart = ({ data }) => {
 
                 <BarChart
                     data={data}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    margin={{ top: 20, right: 30, left: 60, bottom: 5 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                     <XAxis
@@ -44,6 +44,7 @@ const TrendsBarChart = ({ data }) => {
                         tickLine={false}
                         tick={{ fill: '#9ca3af', fontSize: 12 }}
                         tickFormatter={(value) => `${symbol}${value}`}
+                        width={60}
                     />
                     <Tooltip
                         cursor={{ fill: 'rgba(0,0,0,0.02)' }}
