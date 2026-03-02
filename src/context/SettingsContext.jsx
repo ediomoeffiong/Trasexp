@@ -1,13 +1,15 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useRef } from 'react';
 import * as settingsService from '../api/settings';
 import * as userService from '../api/user';
 import * as securityService from '../api/security';
 import { useToast } from './ToastContext';
+import { useAuth } from './AuthContext';
 
 export const SettingsContext = createContext();
 
 export const SettingsProvider = ({ children }) => {
     const { showToast } = useToast();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(true);
 
@@ -18,7 +20,7 @@ export const SettingsProvider = ({ children }) => {
     });
 
     // Track the last applied theme to avoid unnecessary re-applications
-    const lastAppliedThemeRef = React.useRef(null);
+    const lastAppliedThemeRef = useRef(null);
 
     const [hideAmounts, setHideAmounts] = useState(() => {
         return localStorage.getItem('trasexp-hide-amounts') === 'true';
@@ -43,26 +45,18 @@ export const SettingsProvider = ({ children }) => {
         }
     }, []);
 
-    // Watch for theme changes in preferences — only re-apply if theme actually changed
-    useEffect(() => {
-        if (preferences?.theme) {
-            const newTheme = preferences.theme;
-            // Skip if we already applied this exact theme
-            if (lastAppliedThemeRef.current === newTheme) return;
-            lastAppliedThemeRef.current = newTheme;
-
-            applyTheme(newTheme);
-
-            if (newTheme === 'SYSTEM') {
-                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-                const listener = (e) => {
-                    document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-                };
-                mediaQuery.addEventListener('change', listener);
-                return () => mediaQuery.removeEventListener('change', listener);
+    const fetchUserPreferences = useCallback(async () => {
+        try {
+            const data = await settingsService.getUserPreferences();
+            setPreferences(data);
+            if (data.theme) {
+                localStorage.setItem('trasexp-theme', data.theme);
             }
+            return data;
+        } catch (error) {
+            console.error('Error fetching user preferences:', error);
         }
-    }, [preferences?.theme, applyTheme]);
+    }, []);
 
     const fetchProfile = useCallback(async () => {
         try {
@@ -86,18 +80,59 @@ export const SettingsProvider = ({ children }) => {
         }
     }, [showToast]);
 
-    const fetchUserPreferences = useCallback(async () => {
+    const loadAllSettings = useCallback(async () => {
+        setPageLoading(true);
         try {
-            const data = await settingsService.getUserPreferences();
-            setPreferences(data);
-            if (data.theme) {
-                localStorage.setItem('trasexp-theme', data.theme);
-            }
-            return data;
-        } catch (error) {
-            console.error('Error fetching user preferences:', error);
+            await Promise.allSettled([
+                fetchProfile(),
+                fetchNotificationPreferences(),
+                fetchUserPreferences()
+            ]);
+        } finally {
+            setPageLoading(false);
         }
-    }, []);
+    }, [fetchProfile, fetchNotificationPreferences, fetchUserPreferences]);
+
+    // Handle user login/logout
+    useEffect(() => {
+        if (user?.userId) {
+            // User just logged in or app refreshed with active session
+            loadAllSettings();
+        } else if (user === null) {
+            // User logged out
+            setPreferences(null);
+            setProfile(null);
+            setNotifications(null);
+            setSessions([]);
+            setLoginHistory([]);
+
+            // Revert theme to system/default
+            localStorage.removeItem('trasexp-theme');
+            applyTheme('SYSTEM');
+            lastAppliedThemeRef.current = 'SYSTEM';
+        }
+    }, [user?.userId, loadAllSettings, applyTheme]);
+
+    // Watch for theme changes in preferences — only re-apply if theme actually changed
+    useEffect(() => {
+        if (preferences?.theme) {
+            const newTheme = preferences.theme;
+            // Skip if we already applied this exact theme
+            if (lastAppliedThemeRef.current === newTheme) return;
+            lastAppliedThemeRef.current = newTheme;
+
+            applyTheme(newTheme);
+
+            if (newTheme === 'SYSTEM') {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                const listener = (e) => {
+                    document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+                };
+                mediaQuery.addEventListener('change', listener);
+                return () => mediaQuery.removeEventListener('change', listener);
+            }
+        }
+    }, [preferences?.theme, applyTheme]);
 
     const fetchSecurityData = useCallback(async () => {
         try {
@@ -112,19 +147,6 @@ export const SettingsProvider = ({ children }) => {
             showToast('Failed to load security information', 'error');
         }
     }, [showToast]);
-
-    const loadAllSettings = useCallback(async () => {
-        setPageLoading(true);
-        try {
-            await Promise.allSettled([
-                fetchProfile(),
-                fetchNotificationPreferences(),
-                fetchUserPreferences()
-            ]);
-        } finally {
-            setPageLoading(false);
-        }
-    }, [fetchProfile, fetchNotificationPreferences, fetchUserPreferences]);
 
     const updateProfile = async (data) => {
         setLoading(true);
