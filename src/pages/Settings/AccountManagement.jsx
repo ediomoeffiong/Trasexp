@@ -274,6 +274,7 @@ const AccountManagement = () => {
                                         maxLength="4"
                                         value={formData.pin}
                                         onChange={handleFormChange}
+                                        autoComplete="new-password"
                                     />
                                 </div>
 
