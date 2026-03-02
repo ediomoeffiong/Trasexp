@@ -1162,6 +1162,10 @@
 }
 
 /* Mobile Navigation */
+.nav-center.mobile-nav {
+  display: none !important;
+}
+
 .mobile-menu-btn {
   display: none;
   background: none;

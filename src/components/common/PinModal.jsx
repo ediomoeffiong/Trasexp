@@ -75,8 +75,8 @@ const PinModal = ({ isOpen, onClose, onVerify, accountName }) => {
     const isPinComplete = pin.every(digit => digit !== '');
 
     return (
-        <div className="pin-modal-overlay" onClick={(e) => e.target.className === 'pin-modal-overlay' && onClose()}>
-            <div className={`pin-modal-card ${isShaking ? 'shake' : ''}`}>
+        <div className="pin-modal-overlay" onClick={onClose}>
+            <div className={`pin-modal-card ${isShaking ? 'shake' : ''}`} onClick={(e) => e.stopPropagation()}>
                 <div className="pin-modal-header">
                     <div className="lock-icon-wrapper">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -112,16 +112,10 @@ const PinModal = ({ isOpen, onClose, onVerify, accountName }) => {
 
                 <div className="pin-modal-actions">
                     <button
-                        className="btn-pin-cancel"
-                        onClick={onClose}
-                        disabled={loading}
-                    >
-                        Cancel
-                    </button>
-                    <button
                         className={`btn-pin-verify ${isPinComplete ? 'active' : ''}`}
                         onClick={handleSubmit}
                         disabled={loading || !isPinComplete}
+                        style={{ flex: 1 }}
                     >
                         {loading ? (
                             <span className="button-loader"></span>
