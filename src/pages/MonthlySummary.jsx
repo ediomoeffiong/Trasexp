@@ -163,7 +163,7 @@ const MonthlySummary = () => {
                       </div>
                     </div>
                     {/* Visual Bar */}
-                    <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                    <div className="w-full rounded-full h-2 overflow-hidden" style={{ backgroundColor: 'var(--bg-input)' }}>
                       <div
                         className="bg-danger h-full rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${relativePercentage}%` }}

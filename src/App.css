@@ -1386,7 +1386,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: #0b1220;
+    background: var(--bg-surface);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -1411,12 +1411,26 @@
   /* Account Switcher in Mobile Nav - align with nav links */
   .nav-left .account-switcher-wrapper {
     width: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
   }
 
   .nav-left .account-switcher-trigger {
     border-radius: 12px;
-    padding: 0.75rem 1rem;
-    width: auto;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    min-height: 48px;
+    margin: 0.5rem 0;
+    box-sizing: border-box;
+  }
+
+  /* Ensure the trigger doesn't go out of width on click/expanded state */
+  .account-switcher-wrapper.active,
+  .account-switcher-trigger:active {
+    max-width: 100%;
   }
 
   /* Mobile menu close row color override */
