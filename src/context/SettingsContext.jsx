@@ -17,6 +17,9 @@ export const SettingsProvider = ({ children }) => {
         return savedTheme ? { theme: savedTheme } : null;
     });
 
+    // Track the last applied theme to avoid unnecessary re-applications
+    const lastAppliedThemeRef = React.useRef(null);
+
     const [hideAmounts, setHideAmounts] = useState(() => {
         return localStorage.getItem('trasexp-hide-amounts') === 'true';
     });
@@ -40,12 +43,17 @@ export const SettingsProvider = ({ children }) => {
         }
     }, []);
 
-    // Watch for theme changes in preferences
+    // Watch for theme changes in preferences — only re-apply if theme actually changed
     useEffect(() => {
         if (preferences?.theme) {
-            applyTheme(preferences.theme);
+            const newTheme = preferences.theme;
+            // Skip if we already applied this exact theme
+            if (lastAppliedThemeRef.current === newTheme) return;
+            lastAppliedThemeRef.current = newTheme;
 
-            if (preferences.theme === 'SYSTEM') {
+            applyTheme(newTheme);
+
+            if (newTheme === 'SYSTEM') {
                 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
                 const listener = (e) => {
                     document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
@@ -54,7 +62,7 @@ export const SettingsProvider = ({ children }) => {
                 return () => mediaQuery.removeEventListener('change', listener);
             }
         }
-    }, [preferences, applyTheme]);
+    }, [preferences?.theme, applyTheme]);
 
     const fetchProfile = useCallback(async () => {
         try {

@@ -384,7 +384,7 @@ const TransactionListPage = () => {
                 className="floating-add-btn btn btn-primary"
                 aria-label="Add transaction"
             >
-                <Plus size={24} />
+                <Plus size={32} />
             </button>
 
             {/* Default Account Selection Modal */}

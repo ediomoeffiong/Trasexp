@@ -187,17 +187,15 @@ const Dashboard = () => {
               onClick={() => setShowAccountModal(true)}
               className="btn btn-secondary btn-sm"
             >
-              <Wallet size={18} className="mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Add Bank</span>
-              <span className="sm:hidden">Bank</span>
+              <Wallet size={16} style={{ marginRight: '6px', flexShrink: 0 }} />
+              Add Bank
             </button>
             <button
               onClick={handleNewTransactionClick}
               className="btn btn-primary btn-sm"
             >
-              <Plus size={18} className="mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">New Transaction</span>
-              <span className="sm:hidden">New</span>
+              <Plus size={16} style={{ marginRight: '6px', flexShrink: 0 }} />
+              New Transaction
             </button>
           </div>
         </div>

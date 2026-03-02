@@ -406,6 +406,62 @@
   color: var(--text-muted);
 }
 
+/* Desktop-only profile dropdown (hidden on mobile) */
+.desktop-only-profile {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-profile {
+    display: none !important;
+  }
+}
+
+/* Mobile Menu Close Button */
+.mobile-menu-close-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 0 0.5rem 0;
+}
+
+.mobile-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-close-btn:hover {
+  background: var(--danger-light);
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+/* Fix .btn-sm for better responsive sizing */
+.btn-sm {
+  padding: 0.5rem 0.875rem !important;
+  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .btn-sm {
+    padding: 0.45rem 0.7rem !important;
+    font-size: 0.8rem;
+  }
+}
+
 /* Navigation */
 .navbar {
   background: var(--bg-nav);
@@ -1350,6 +1406,41 @@
     transform: translateX(0);
     visibility: visible !important;
     display: flex !important;
+  }
+
+  /* Account Switcher in Mobile Nav - align with nav links */
+  .nav-left .account-switcher-wrapper {
+    width: 100%;
+  }
+
+  .nav-left .account-switcher-trigger {
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    width: auto;
+  }
+
+  /* Mobile menu close row color override */
+  .mobile-menu-close-row {
+    padding-top: 1rem;
+    padding-bottom: 0;
+  }
+
+  .mobile-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .mobile-close-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #FCA5A5;
+  }
+
+  [data-theme='light'] .mobile-close-btn {
+    background: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
   }
 
   /* Mobile User Profile Styling */
