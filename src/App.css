@@ -667,6 +667,79 @@
   color: var(--text-muted);
 }
 
+/* Modern Visibility Toggle Button */
+.visibility-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  padding-right: 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.visibility-toggle-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-color);
+  background: var(--bg-primary-light);
+}
+
+.visibility-toggle-btn .toggle-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-page);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.visibility-toggle-btn:hover .toggle-icon-wrapper {
+  background: var(--primary-color);
+  color: white;
+}
+
+.visibility-toggle-btn .toggle-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.visibility-toggle-btn:hover .toggle-label {
+  color: var(--primary-color);
+}
+
+.visibility-toggle-btn.hidden .toggle-icon-wrapper {
+  color: var(--warning-color);
+}
+
+.visibility-toggle-btn.visible .toggle-icon-wrapper {
+  color: var(--primary-color);
+}
+
+[data-theme='dark'] .visibility-toggle-btn {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+[data-theme='dark'] .visibility-toggle-btn .toggle-icon-wrapper {
+  background: #111827;
+}
+
+[data-theme='dark'] .visibility-toggle-btn:hover {
+  background: #2d3748;
+}
+
 .account-item-balance {
   font-weight: 600;
   font-size: 0.9rem;
@@ -2268,11 +2341,37 @@
 /* Transaction Modal */
 .modal-overlay {
   animation: fadeIn 0.2s ease-out;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 1rem;
+  overflow-y: auto;
+  /* Allow overlay itself to scroll if needed */
+}
+
+.modal-container {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-height: 90vh;
+  /* Don't exceed screen height */
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  margin: auto;
+  /* Center when flex is used or on its own */
 }
 
 .modal-content {
-  animation: slideUp 0.3s ease-out;
   background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideUp {
@@ -2290,12 +2389,37 @@
 .modal-header {
   position: sticky;
   top: 0;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
   background: var(--bg-surface);
   z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2,
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  /* This is the key fix */
+  flex: 1;
   background: var(--bg-surface);
+}
+
+.modal-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
 }
 
 /* Floating Add Button */

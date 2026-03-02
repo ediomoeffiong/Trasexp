@@ -3,17 +3,20 @@ import SummaryCard from '../components/common/SummaryCard';
 import CardSkeleton from '../components/common/CardSkeleton';
 import TransactionList from '../components/dashboard/TransactionList';
 import Loading from '../components/common/Loading';
-import { getAllTransactions } from '../api/transactions';
+import { getAllTransactions, createTransaction } from '../api/transactions';
 
-import { Wallet, TrendingUp, TrendingDown, Plus, List, Calendar, DollarSign } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, Plus, List, Calendar, DollarSign, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSettings } from '../hooks/useSettings';
 import { useAccount } from '../context/AccountContext';
+import TransactionForm from '../components/transactions/TransactionForm';
+import AccountForm from '../components/accounts/AccountForm';
+import DefaultAccountModal from '../components/common/DefaultAccountModal';
 
 // Custom Premium Eye Icons (Modern geometric style)
 const EyeIcon = ({ size = 22, className = "" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8" />
     <circle cx="12" cy="12" r="3.5" strokeWidth="1.5" />
     <circle cx="12" cy="12" r="1" fill="currentColor" />
     <path d="M12 8v1M12 15v1M8 12h1M15 12h1" strokeWidth="1.5" opacity="0.6" />
@@ -33,6 +36,33 @@ import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const { isAuthenticating, setIsAuthenticating } = useAuth();
+  const { accounts, selectedAccountId, selectedAccount, createAccount, fetchAccounts } = useAccount();
+  const { hideAmounts, toggleHideAmounts } = useSettings();
+
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Modal states
+  const [showTransactionModal, setShowTransactionModal] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [showDefaultAccountModal, setShowDefaultAccountModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [modalError, setModalError] = useState(null);
+
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllTransactions({ accountId: selectedAccountId });
+      setTransactions(data);
+      setError(null);
+    } catch (err) {
+      console.error("API Error:", err);
+      setError('Failed to load recent transactions');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Clear the loading overlay once the dashboard is mounted
@@ -40,29 +70,53 @@ const Dashboard = () => {
       setIsAuthenticating(false);
     }
   }, [isAuthenticating, setIsAuthenticating]);
-  const { hideAmounts, toggleHideAmounts } = useSettings();
-  const { selectedAccountId, selectedAccount } = useAccount();
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllTransactions({ accountId: selectedAccountId });
-        setTransactions(data);
-        setError(null);
-      } catch (err) {
-        console.error("API Error:", err);
-        setError('Failed to load recent transactions');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchTransactions();
   }, [selectedAccountId]);
+
+  const handleNewTransactionClick = () => {
+    if (selectedAccountId === null) {
+      const hasDefault = accounts.some(a => a.isDefault);
+      if (!hasDefault) {
+        setShowDefaultAccountModal(true);
+        return;
+      }
+    }
+    setShowTransactionModal(true);
+  };
+
+  const handleAddTransaction = async (formData) => {
+    setSubmitting(true);
+    setModalError(null);
+    try {
+      const dataToSubmit = {
+        ...formData,
+        accountId: selectedAccountId
+      };
+      await createTransaction(dataToSubmit);
+      await fetchTransactions();
+      setShowTransactionModal(false);
+    } catch (err) {
+      setModalError(err.response?.data?.message || 'Failed to add transaction.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleAddAccount = async (formData) => {
+    setSubmitting(true);
+    setModalError(null);
+    try {
+      await createAccount(formData);
+      await fetchAccounts();
+      setShowAccountModal(false);
+    } catch (err) {
+      setModalError(err.response?.data?.message || 'Failed to create account');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Calculate totals (safe with empty array)
   const totalIncome = transactions
@@ -109,7 +163,10 @@ const Dashboard = () => {
     <div className="dashboard page-content">
       <div className="dashboard-header mb-8 flex justify-between items-end">
         <div className="header-text-group">
-          <h1 className="text-2xl font-bold mb-1">Financial Overview</h1>
+          <h1 className="text-2xl font-bold mb-1">
+            Financial Overview
+            {selectedAccount && <span className="text-primary ml-2">— {selectedAccount.name}</span>}
+          </h1>
           <p className="text-muted">
             {error ? <span className="text-danger">Offline Mode</span> : "Welcome back! Here is your latest summary."}
           </p>
@@ -117,15 +174,32 @@ const Dashboard = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={toggleHideAmounts}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            className={`visibility-toggle-btn ${hideAmounts ? 'hidden' : 'visible'}`}
             title={hideAmounts ? "Show amounts" : "Hide amounts"}
           >
-            {hideAmounts ? <EyeOffIcon size={22} /> : <EyeIcon size={22} />}
+            <div className="toggle-icon-wrapper">
+              {hideAmounts ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
+            </div>
+            <span className="toggle-label">{hideAmounts ? 'Show' : 'Hide'}</span>
           </button>
-          <Link to="/transactions" className="btn btn-primary hidden-mobile">
-            <Plus size={18} className="mr-2" />
-            New Transaction
-          </Link>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowAccountModal(true)}
+              className="btn btn-secondary btn-sm"
+            >
+              <Wallet size={18} className="mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Add Bank</span>
+              <span className="sm:hidden">Bank</span>
+            </button>
+            <button
+              onClick={handleNewTransactionClick}
+              className="btn btn-primary btn-sm"
+            >
+              <Plus size={18} className="mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">New Transaction</span>
+              <span className="sm:hidden">New</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -202,17 +276,83 @@ const Dashboard = () => {
           </div>
           <h2 className="text-xl font-bold mb-2">No transactions yet</h2>
           <p className="text-muted mb-6">Add your first income or expense to see your dashboard come to life.</p>
-          <Link to="/transactions" className="btn btn-primary">
+          <button onClick={handleNewTransactionClick} className="btn btn-primary">
             <Plus size={20} className="mr-2" />
             Add Transaction
-          </Link>
+          </button>
         </div>
       ) : (
         <TransactionList transactions={recentTransactions} loading={loading} />
       )}
+
+      {/* New Transaction Modal */}
+      {showTransactionModal && (
+        <div className="modal-overlay fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowTransactionModal(false)}>
+          <div className="modal-content bg-white rounded-lg shadow-xl max-w-2xl w-full" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="text-2xl font-bold">New Transaction</h2>
+              <button
+                onClick={() => setShowTransactionModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="modal-body p-6">
+              {modalError && (
+                <div className="alert alert-danger mb-4">
+                  {modalError}
+                </div>
+              )}
+              <TransactionForm
+                onSubmit={handleAddTransaction}
+                disabled={submitting}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Bank Account Modal */}
+      {showAccountModal && (
+        <div className="modal-overlay fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowAccountModal(false)}>
+          <div className="modal-container max-w-lg" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Create New Account</h3>
+              <button
+                className="text-gray-400 hover:text-gray-600"
+                onClick={() => setShowAccountModal(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="modal-body p-6">
+              {modalError && (
+                <div className="alert alert-danger mb-4">
+                  {modalError}
+                </div>
+              )}
+              <AccountForm
+                onSubmit={handleAddAccount}
+                onCancel={() => setShowAccountModal(false)}
+                loading={submitting}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Default Account Selection Modal */}
+      <DefaultAccountModal
+        isOpen={showDefaultAccountModal}
+        onClose={() => setShowDefaultAccountModal(false)}
+        onAccountSelected={() => {
+          setShowDefaultAccountModal(false);
+          setShowTransactionModal(true);
+        }}
+      />
     </div>
   );
 };
-
 
 export default Dashboard;

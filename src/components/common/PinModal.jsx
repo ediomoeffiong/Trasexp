@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './PinModal.css';
 
 const PinModal = ({ isOpen, onClose, onVerify, accountName }) => {
@@ -74,7 +75,7 @@ const PinModal = ({ isOpen, onClose, onVerify, accountName }) => {
 
     const isPinComplete = pin.every(digit => digit !== '');
 
-    return (
+    return createPortal(
         <div className="pin-modal-overlay" onClick={onClose}>
             <div className={`pin-modal-card ${isShaking ? 'shake' : ''}`} onClick={(e) => e.stopPropagation()}>
                 <div className="pin-modal-header">
@@ -123,7 +124,8 @@ const PinModal = ({ isOpen, onClose, onVerify, accountName }) => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

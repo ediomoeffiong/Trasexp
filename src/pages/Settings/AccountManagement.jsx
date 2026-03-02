@@ -6,36 +6,24 @@ import {
     Trash2,
     Star,
     Shield,
-    ShieldOff,
     Wallet,
     CreditCard,
     Briefcase,
     CircleDollarSign,
-    ChevronRight,
-    AlertCircle
+    X
 } from 'lucide-react';
 import { formatCurrency } from '../../utils/currency';
 import { useSettings } from '../../hooks/useSettings';
+import AccountForm from '../../components/accounts/AccountForm';
 
 const AccountManagement = () => {
-    const { accounts, createAccount, updateAccount, deleteAccount, fetchAccounts } = useAccount();
+    const { accounts, createAccount, updateAccount, deleteAccount } = useAccount();
     const { preferences } = useSettings();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [editingAccount, setEditingAccount] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    const [formData, setFormData] = useState({
-        name: '',
-        type: 'SAVINGS',
-        description: '',
-        pin: '',
-        isDefault: false,
-        pinRequired: false,
-        currency: 'NGN',
-        includeInOverall: true
-    });
 
     const accountTypes = [
         { value: 'SAVINGS', label: 'Savings', icon: <Wallet size={18} /> },
@@ -46,44 +34,17 @@ const AccountManagement = () => {
     ];
 
     const handleOpenCreate = () => {
-        setFormData({
-            name: '',
-            type: 'SAVINGS',
-            description: '',
-            pin: '',
-            isDefault: false,
-            pinRequired: false,
-            currency: 'NGN',
-            includeInOverall: true
-        });
+        setError(null);
         setShowCreateModal(true);
     };
 
     const handleOpenEdit = (account) => {
+        setError(null);
         setEditingAccount(account);
-        setFormData({
-            name: account.name,
-            type: account.type,
-            description: account.description || '',
-            pin: '', // Don't show existing PIN
-            isDefault: account.isDefault,
-            pinRequired: account.pinRequired,
-            currency: account.currency || 'NGN',
-            includeInOverall: account.includeInOverall ?? true
-        });
         setShowEditModal(true);
     };
 
-    const handleFormChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
-    };
-
-    const handleCreateAccount = async (e) => {
-        e.preventDefault();
+    const handleCreateAccount = async (formData) => {
         setLoading(true);
         setError(null);
         try {
@@ -96,13 +57,13 @@ const AccountManagement = () => {
         }
     };
 
-    const handleUpdateAccount = async (e) => {
-        e.preventDefault();
+    const handleUpdateAccount = async (formData) => {
         setLoading(true);
         setError(null);
         try {
             await updateAccount(editingAccount.id, formData);
             setShowEditModal(false);
+            setEditingAccount(null);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to update account');
         } finally {
@@ -207,148 +168,23 @@ const AccountManagement = () => {
 
             {/* Account Modal (Create/Edit) */}
             {(showCreateModal || showEditModal) && (
-                <div className="modal-overlay">
-                    <div className="modal-container max-w-lg">
+                <div className="modal-overlay fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => { setShowCreateModal(false); setShowEditModal(false); setEditingAccount(null); }}>
+                    <div className="modal-container max-w-lg" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>{showCreateModal ? 'Create New Account' : 'Edit Account'}</h3>
-                            <button className="modal-close" onClick={() => { setShowCreateModal(false); setShowEditModal(false); }}>&times;</button>
+                            <button className="text-gray-400 hover:text-gray-600" onClick={() => { setShowCreateModal(false); setShowEditModal(false); setEditingAccount(null); }}>
+                                <X size={24} />
+                            </button>
                         </div>
-                        <form onSubmit={showCreateModal ? handleCreateAccount : handleUpdateAccount}>
-                            <div className="modal-body">
-                                {error && (
-                                    <div className="alert alert-danger mb-4 flex items-center gap-2">
-                                        <AlertCircle size={18} /> {error}
-                                    </div>
-                                )}
-
-                                <div className="form-group mb-4">
-                                    <label className="form-label">Account Name</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        className="form-input"
-                                        placeholder="e.g. GTBank Savings, Personal Wallet"
-                                        value={formData.name}
-                                        onChange={handleFormChange}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4 mb-4">
-                                    <div className="form-group">
-                                        <label className="form-label">Account Type</label>
-                                        <select
-                                            name="type"
-                                            className="form-select"
-                                            value={formData.type}
-                                            onChange={handleFormChange}
-                                        >
-                                            {accountTypes.map(t => (
-                                                <option key={t.value} value={t.value}>{t.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label">Currency</label>
-                                        <select
-                                            name="currency"
-                                            className="form-select"
-                                            value={formData.currency}
-                                            onChange={handleFormChange}
-                                        >
-                                            <option value="NGN">Naira (₦)</option>
-                                            <option value="USD">Dollar ($)</option>
-                                            <option value="EUR">Euro (€)</option>
-                                            <option value="GBP">Pound (£)</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="form-group mb-4">
-                                    <label className="form-label">Account PIN (Optional)</label>
-                                    <input
-                                        type="password"
-                                        name="pin"
-                                        className="form-input"
-                                        placeholder="4 digits"
-                                        maxLength="4"
-                                        value={formData.pin}
-                                        onChange={handleFormChange}
-                                        autoComplete="new-password"
-                                    />
-                                </div>
-
-                                {showEditModal && formData.currency !== editingAccount?.currency && (
-                                    <div className="alert alert-info mb-4 flex items-center gap-2">
-                                        <AlertCircle size={18} />
-                                        <span className="text-xs">Changing currency will convert your balance and transactions using real-time rates.</span>
-                                    </div>
-                                )}
-
-                                <div className="form-group mb-4">
-                                    <label className="form-label">Description (Optional)</label>
-                                    <textarea
-                                        name="description"
-                                        className="form-input"
-                                        rows="2"
-                                        placeholder="Short description for this account"
-                                        value={formData.description}
-                                        onChange={handleFormChange}
-                                    ></textarea>
-                                </div>
-
-                                <div className="flex flex-col gap-3">
-                                    <label className="flex items-center gap-3 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            name="isDefault"
-                                            checked={formData.isDefault}
-                                            onChange={handleFormChange}
-                                            disabled={editingAccount?.isDefault}
-                                            className="w-4 h-4 rounded text-primary focus:ring-primary"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-sm">Set as Default Account</span>
-                                            <span className="text-xs text-muted">Primary account for general transactions</span>
-                                        </div>
-                                    </label>
-
-                                    <label className="flex items-center gap-3 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            name="pinRequired"
-                                            checked={formData.pinRequired}
-                                            onChange={handleFormChange}
-                                            className="w-4 h-4 rounded text-primary focus:ring-primary"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-sm">Require PIN for Access</span>
-                                            <span className="text-xs text-muted">Protect sensitive accounts with a security PIN</span>
-                                        </div>
-                                    </label>
-
-                                    <label className="flex items-center gap-3 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            name="includeInOverall"
-                                            checked={formData.includeInOverall}
-                                            onChange={handleFormChange}
-                                            className="w-4 h-4 rounded text-primary focus:ring-primary"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-sm">Include in Overall Summary</span>
-                                            <span className="text-xs text-muted">Include this account's data in the aggregate dashboard view</span>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={() => { setShowCreateModal(false); setShowEditModal(false); }}>Cancel</button>
-                                <button type="submit" className="btn btn-primary" disabled={loading}>
-                                    {loading ? 'Processing...' : (showCreateModal ? 'Create Account' : 'Save Changes')}
-                                </button>
-                            </div>
-                        </form>
+                        <div className="modal-body p-6">
+                            <AccountForm
+                                onSubmit={showCreateModal ? handleCreateAccount : handleUpdateAccount}
+                                onCancel={() => { setShowCreateModal(false); setShowEditModal(false); setEditingAccount(null); }}
+                                initialData={editingAccount}
+                                loading={loading}
+                                error={error}
+                            />
+                        </div>
                     </div>
                 </div>
             )}
@@ -366,15 +202,8 @@ const AccountManagement = () => {
           border-radius: 99px;
           font-weight: 600;
         }
-        .alert-danger {
-          background: var(--bg-danger-light);
-          color: var(--danger-color);
-          padding: 0.75rem 1rem;
-          border-radius: 0.5rem;
-          font-size: 0.875rem;
-        }
       `}</style>
-        </div >
+        </div>
     );
 };
 
