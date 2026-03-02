@@ -44,8 +44,15 @@ import AccountSwitcher from '../components/common/AccountSwitcher';
 const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticating, setIsAuthenticating } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // Safety check: clear authentication loading state if we are in MainLayout
+    if (isAuthenticating) {
+      setIsAuthenticating(false);
+    }
+  }, [isAuthenticating, setIsAuthenticating]);
 
   const handleLogout = () => {
     logout();

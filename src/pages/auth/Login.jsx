@@ -8,10 +8,9 @@ const Login = () => {
         email: '',
         password: '',
     });
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, isAuthenticating } = useAuth();
     const { showToast } = useToast();
 
     const handleChange = (e) => {
@@ -25,7 +24,6 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
         setError('');
 
         try {
@@ -35,9 +33,7 @@ const Login = () => {
             if (result.success) {
                 showToast('Login successful! Welcome back.', 'success');
                 console.log('Redirecting to dashboard...');
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 500);
+                navigate('/dashboard');
             } else {
                 const errorMsg = result.error || 'Login failed. Please try again.';
                 setError(errorMsg);
@@ -48,8 +44,6 @@ const Login = () => {
             const errorMsg = err.message || 'An unexpected error occurred';
             setError(errorMsg);
             showToast(errorMsg, 'error');
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -88,7 +82,7 @@ const Login = () => {
                             className="form-input"
                             placeholder="name@example.com"
                             required
-                            disabled={isLoading}
+                            disabled={isAuthenticating}
                         />
                     </div>
 
@@ -106,16 +100,16 @@ const Login = () => {
                             className="form-input"
                             placeholder="••••••••"
                             required
-                            disabled={isLoading}
+                            disabled={isAuthenticating}
                         />
                     </div>
 
                     <button
                         type="submit"
                         className="btn btn-primary btn-block"
-                        disabled={isLoading}
+                        disabled={isAuthenticating}
                     >
-                        {isLoading ? 'Logging in...' : 'Log In'}
+                        {isAuthenticating ? 'Logging in...' : 'Log In'}
                     </button>
                 </form>
 

@@ -29,7 +29,17 @@ const EyeOffIcon = ({ size = 22, className = "" }) => (
   </svg>
 );
 
+import { useAuth } from '../context/AuthContext';
+
 const Dashboard = () => {
+  const { isAuthenticating, setIsAuthenticating } = useAuth();
+
+  useEffect(() => {
+    // Clear the loading overlay once the dashboard is mounted
+    if (isAuthenticating) {
+      setIsAuthenticating(false);
+    }
+  }, [isAuthenticating, setIsAuthenticating]);
   const { hideAmounts, toggleHideAmounts } = useSettings();
   const { selectedAccountId, selectedAccount } = useAccount();
   const [transactions, setTransactions] = useState([]);

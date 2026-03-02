@@ -10,10 +10,9 @@ const Register = () => {
         password: '',
         confirmPassword: '',
     });
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { register } = useAuth();
+    const { register, isAuthenticating } = useAuth();
     const { showToast } = useToast();
 
     const handleChange = (e) => {
@@ -44,7 +43,6 @@ const Register = () => {
             return;
         }
 
-        setIsLoading(true);
         setError('');
 
         try {
@@ -61,9 +59,7 @@ const Register = () => {
             if (result.success) {
                 showToast('Account created successfully! Welcome aboard.', 'success');
                 console.log('Redirecting to dashboard...');
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 500);
+                navigate('/dashboard');
             } else {
                 const errorMsg = result.error || 'Registration failed. Please try again.';
                 setError(errorMsg);
@@ -74,8 +70,6 @@ const Register = () => {
             const errorMsg = err.message || 'An unexpected error occurred';
             setError(errorMsg);
             showToast(errorMsg, 'error');
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -114,7 +108,7 @@ const Register = () => {
                             className="form-input"
                             placeholder="John Doe"
                             required
-                            disabled={isLoading}
+                            disabled={isAuthenticating}
                         />
                     </div>
 
@@ -129,7 +123,7 @@ const Register = () => {
                             className="form-input"
                             placeholder="name@example.com"
                             required
-                            disabled={isLoading}
+                            disabled={isAuthenticating}
                         />
                     </div>
 
@@ -145,7 +139,7 @@ const Register = () => {
                             placeholder="••••••••"
                             required
                             minLength={6}
-                            disabled={isLoading}
+                            disabled={isAuthenticating}
                         />
                         <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
                             Minimum 6 characters
@@ -163,16 +157,16 @@ const Register = () => {
                             className="form-input"
                             placeholder="••••••••"
                             required
-                            disabled={isLoading}
+                            disabled={isAuthenticating}
                         />
                     </div>
 
                     <button
                         type="submit"
                         className="btn btn-primary btn-block"
-                        disabled={isLoading}
+                        disabled={isAuthenticating}
                     >
-                        {isLoading ? 'Creating Account...' : 'Create Account'}
+                        {isAuthenticating ? 'Creating Account...' : 'Create Account'}
                     </button>
                 </form>
 
